@@ -2,30 +2,26 @@ import { on, once, emit, EventHandler } from '@create-figma-plugin/utilities'
 
 import { useState, useEffect } from 'preact/hooks'
 
-import { OnceHandler, rejectCheck, rejectSymbol, asyncEmit } from '../interface'
+import { OnceHandler, rejectCheck, rejectSymbol, asyncEmit, ConcatStrings2, prefix } from '../interface'
 
-import { UserDuplex } from '../types'
+import { FigmaUser } from '../types'
+import { duplexKeys, UserDuplex } from '../duplex'
 import { generateRandomText2 } from '../../utils/textTools'
-
-export type FigmaUser = {
-	uuid: string
-	name: string
-}
 
 /**
  * User Data 전송
  */
-export interface UserHandler extends EventHandler {
-	name: 'User'
+export interface DataUserHandler extends EventHandler {
+	name: ConcatStrings2<'DATA_', 'User'>
 	handler: (user: FigmaUser) => void
 }
 /**
  * 요청 보내는 코드
  * 받는 코드는 위에서 처리할 수 있게 구성
  */
-export interface getUserHandler extends EventHandler {
-	name: 'getUser'
-	handler: (key: string) => void
+export interface SignalUserHandler extends EventHandler {
+	name: ConcatStrings2<'SIGNAL_', 'User'>
+	handler: (key?: string) => void
 }
 
 // 어뎁터는 한 번 또는 n번 선언
@@ -71,7 +67,7 @@ const a = async () => {
 export const getUserSample = () =>
 	new Promise((resolve, reject) => {
 		const key = generateRandomText2()
-		emit<getUserHandler>('getUser', key)
+		emit<SignalUserHandler>('SIGNAL_User', key)
 		const event = once<OnceHandler<[FigmaUser]>>(key, (...args) => {
 			resolve(...args)
 		})
@@ -88,12 +84,12 @@ export const useUser_Adapter = () => {
 
 	useEffect(() => {
 		// 항상 열려있는 인터페이스
-		const event = on<UserHandler>('User', (user) => {
+		const event = on<DataUserHandler>('DATA_User', (user) => {
 			setUser(user)
 		})
 		// 공식 루트
 		// 받을 키로 전달해서 값을 받게 함
-		emit<getUserHandler>('getUser', 'User')
+		emit<SignalUserHandler>('SIGNAL_User')
 
 		return () => {
 			event()

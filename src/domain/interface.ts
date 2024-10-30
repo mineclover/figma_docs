@@ -1,8 +1,9 @@
 import { on, once, emit, EventHandler } from '@create-figma-plugin/utilities'
 import { generateRandomText2 } from '../utils/textTools'
+import { duplexKeys } from './duplex'
 
 /**
- * 데이터인터페이스 제너레이터
+ * 데이터 인터페이스 제네릭
  */
 export interface OnceHandler<T extends Array<any>> extends EventHandler {
 	name: string
@@ -53,7 +54,8 @@ export const prefix = {
 	/** 데이터 응답 */
 	data: 'DATA_',
 	memo: 'MEMO_',
-}
+	user: 'USER_',
+} as const
 
 /**
  * 일회용 호출
@@ -78,3 +80,30 @@ export const asyncEmit = <T extends Record<'key' | 'data', any>>(handlerKey: T['
 			reject(rejectSymbol)
 		}, delay2)
 	})
+
+// 타입 정의
+type ConcatStrings<A extends string, B extends string> = `${A}${B}`
+
+export type ConcatStrings2<
+	A extends (typeof prefix)[keyof typeof prefix],
+	B extends (typeof duplexKeys)[keyof typeof duplexKeys],
+> = `${A}${B}`
+
+// 문자열을 합치고 타입을 추론하는 함수
+function concatWithType<A extends string, B extends string>(a: A, b: B): ConcatStrings<A, B> {
+	return `${a}${b}` as const
+}
+
+export function concatWithType2<
+	A extends (typeof prefix)[keyof typeof prefix],
+	B extends (typeof duplexKeys)[keyof typeof duplexKeys],
+>(a: A, b: B): ConcatStrings<A, B> {
+	return `${a}${b}` as const
+}
+
+export function concatWithType3<A extends keyof typeof prefix, B extends keyof typeof duplexKeys>(
+	a: A,
+	b: B
+): ConcatStrings<(typeof prefix)[A], (typeof duplexKeys)[B]> {
+	return `${prefix[a]}${duplexKeys[b]}` as const
+}
