@@ -7,6 +7,7 @@ import { NonNullableComponentTypeExtract } from '../../types/utilType'
 import { emit } from '@create-figma-plugin/utilities'
 import { ResizeWindowHandler } from '../adapter/types'
 import Root from '@/pages/Root'
+import { AppProvider } from '@/domain/Provider'
 
 const fn = async (files: Array<File>) => {
 	const text = await files[0].text()
@@ -39,7 +40,7 @@ function Plugin() {
 			value: nav[2],
 		},
 	] as const
-	const [value, setValue] = useState<string>('변수 추출')
+	const [value, setValue] = useState<string>('SVG 생성기')
 
 	function handleChange(
 		//  event: NonNullableComponentTypeExtract<typeof Tabs, 'onChange'>
@@ -48,7 +49,11 @@ function Plugin() {
 		const newValue = event.currentTarget.value
 		setValue(newValue)
 	}
-	return <Tabs onChange={handleChange} options={options} value={value} />
+	return (
+		<AppProvider>
+			<Tabs onChange={handleChange} options={options} value={value} />
+		</AppProvider>
+	)
 }
 
 export default render(Plugin)

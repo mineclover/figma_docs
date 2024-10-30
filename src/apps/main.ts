@@ -1,7 +1,10 @@
 import { once, showUI } from '@create-figma-plugin/utilities'
 import { adapterSampleHandler, CloseHandler } from '../adapter/types'
+import { mainUser_Adapter } from '@/domain/user/userAdapter'
 
 export default function () {
+	mainUser_Adapter()
+
 	once<adapterSampleHandler>('SAMPLE', function (count: number) {
 		const nodes: Array<SceneNode> = []
 		for (let i = 0; i < count; i++) {

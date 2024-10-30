@@ -7,8 +7,15 @@ const generateUUID = () => {
 }
 
 export const getUserModel = async () => {
-	const name = (await figma.clientStorage.getAsync('name')) ?? ''
-	const uuid = (await figma.clientStorage.getAsync('uuid')) ?? generateUUID()
+	const nameR = await figma.clientStorage.getAsync('name')
+
+	console.log(nameR, 'name')
+	const name = nameR ?? ''
+	const uuidR = await figma.clientStorage.getAsync('uuid')
+	console.log(uuidR, 'uuid1')
+
+	const uuid = uuidR ?? generateUUID()
+	console.log(uuid, 'uuid2')
 	return { name, uuid } as FigmaUser
 }
 

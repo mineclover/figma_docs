@@ -1,8 +1,13 @@
-import { render } from '@create-figma-plugin/ui'
+import UserPage from '@/domain/user/UserPage'
 import { h } from 'preact'
 
 function Root() {
-	return <div>hello World</div>
+	return (
+		<div>
+			ㅁㄴㅇㄹ
+			<UserPage></UserPage>
+		</div>
+	)
 }
 
 export default Root

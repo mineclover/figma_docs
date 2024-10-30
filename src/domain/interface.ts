@@ -1,31 +1,111 @@
 import { on, once, emit, EventHandler } from '@create-figma-plugin/utilities'
 import { generateRandomText2 } from '../utils/textTools'
-import { duplexKeys } from './duplex'
+import { Duplex, duplexKeys, DuplexKeysType } from './duplex'
 
 /**
- * 데이터 인터페이스 제네릭
+ * 데이터 인터페이스 제네릭이긴 한데...
+ * 그냥 handler는 값 하나만 보내는걸로 처리하는게 깔끔한듯
  */
-export interface OnceHandler<T extends Array<any>> extends EventHandler {
-	name: string
-	handler: (...args: T) => void
-}
+// export interface OnceHandler<T extends Array<any>> extends EventHandler {
+// 	name: string
+// 	handler: (...args: T) => void
+// }
 
 /**
- * 데이터 인터페이스
+ * 데이터 인터페이스 v1
  */
-export interface ActionHandler extends EventHandler {
+export interface DataHandler extends EventHandler {
 	name: string
 	handler: (args: any) => void
 }
 
 /**
- * 시그널 인터페이스
+ * 시그널 인터페이스 v1
  */
 export interface SignalHandler extends EventHandler {
 	name: string
 	handler: (random?: string) => void
 }
 
+/**
+ * Duplex 호환
+ * 데이터 인터페이스 v2
+ */
+export interface DataHandler2<T extends DuplexKeysType> extends EventHandler {
+	name: ConcatStrings2<'DATA_', T>
+	handler: (args: Extract<Duplex, { key: T }>['data']) => void
+}
+
+export type DataUserHandler = DataHandler2<'User'>
+on<DataUserHandler>('DATA_User', (user) => {
+	console.log(user)
+})
+
+/**
+ * Duplex 호환
+ * 시그널 인터페이스 v2
+ */
+export interface SignalHandler2<T extends DuplexKeysType> extends EventHandler {
+	name: ConcatStrings2<'SIGNAL_', T>
+	handler: (random?: '') => void
+}
+/**
+ * 시그널 인터페이스 v2 코드 예시
+ * 받는 코드는 위에서 처리할 수 있게 구성
+ */
+export type SignalUserHandler = SignalHandler2<'User'>
+
+/** 시그널 반응
+ * 랜덤 여부 맞춰서 emit 실행됨
+ * key에 random 없는 취급해도 됬음
+ */
+export const signalReceiving = <T extends DuplexKeysType>(type: T, randomKey?: string) => {
+	const key = prefix['data'] + type + (randomKey ?? '')
+	return (arg: Extract<Duplex, { key: T }>['data']) => dataEmit(key, arg)
+}
+
+/** v1 예시 */
+// 써도 되는 구간은 정해진 키를 기반으로 정해진 호출이 있어서 괜찮긴 했음
+// 비슷하게 duplexKeys base로 키에 맞춰서 자동 추론하는 것도 가능해보여서 v2 만듬
+export const dataOn = on<DataHandler>
+export const dataOnce = once<DataHandler>
+export const dataEmit = emit<DataHandler>
+export const signalOn = on<SignalHandler>
+export const signalOnce = once<SignalHandler>
+export const signalEmit = emit<SignalHandler>
+
+/** v2 예시 */
+export const userDataOn = on<DataHandler2<'User'>>
+export const userDataOnce = once<DataHandler2<'User'>>
+export const userDataEmit = emit<DataHandler2<'User'>>
+export const userSignalOn = on<SignalHandler2<'User'>>
+export const userSignalOnce = once<SignalHandler2<'User'>>
+export const userSignalEmit = emit<SignalHandler2<'User'>>
+
+/** v2 타입 생성 */
+export const createDataHandlers = <K extends DuplexKeysType>() => ({
+	dataOn: on<DataHandler2<K>>,
+	dataOnce: once<DataHandler2<K>>,
+	dataEmit: emit<DataHandler2<K>>,
+	signalOn: on<SignalHandler2<K>>,
+	signalOnce: once<SignalHandler2<K>>,
+	signalEmit: emit<SignalHandler2<K>>,
+})
+
+/** v2 타입 생성 예시 */
+
+export const memoHandlers = createDataHandlers<'Memo'>()
+export const sectionHandlers = createDataHandlers<'Section'>()
+sectionHandlers.dataOn('DATA_Section', (section) => {
+	console.log(section)
+})
+
+/**
+ * v3는... 아래 느낌으로 생각하고 있는데 ...args 처리가 더 세밀하게 들어가야해서 방법은 아닌 걸로 보임
+ * const userSignalEmit2 = (...args: Parameters<typeof userSignalEmit>) => emit<SignalHandler2<'User'>>('SIGNAL_User', ...args)
+ */
+
+/** 실행 여부 판단용 */
 export const rejectSymbol = Symbol('once reject')
 
 export const rejectCheck = <T>(value: T | typeof rejectSymbol): value is T => {
@@ -62,6 +142,7 @@ export const prefix = {
  * 저장하는 adapter main에는 adapter 만 넣어야 함
  * 호출 키랑 응답 값이 다름
  * 호출 어뎁터랑 응답 어뎁터가 달라서 실별자 정의 해야함
+ * asyncEmit<UserDuplex>('User')
  */
 export const asyncEmit = <T extends Record<'key' | 'data', any>>(handlerKey: T['key'], delay?: number) =>
 	new Promise<T['data'] | typeof rejectSymbol>((resolve, reject) => {
@@ -69,11 +150,35 @@ export const asyncEmit = <T extends Record<'key' | 'data', any>>(handlerKey: T['
 		const signalKey = prefix['signal'] + handlerKey
 		const dataKey = prefix['data'] + handlerKey
 		const delay2 = delay ?? 1000
-		const event = once<ActionHandler>(dataKey + random, (args) => {
+		const event = dataOnce(dataKey + random, (args) => {
 			resolve(args)
 		})
 
-		emit<SignalHandler>(signalKey, random)
+		signalEmit(signalKey, random)
+
+		setTimeout(() => {
+			event()
+			reject(rejectSymbol)
+		}, delay2)
+	})
+
+/**
+ * asyncEmit('User')
+ * @param handlerKey
+ * @param delay
+ * @returns
+ */
+export const asyncEmit2 = <T extends DuplexKeysType>(handlerKey: T, delay?: number) =>
+	new Promise<Extract<Duplex, { key: T }>['data'] | typeof rejectSymbol>((resolve, reject) => {
+		const random = generateRandomText2()
+		const signalKey = prefix['signal'] + handlerKey
+		const dataKey = prefix['data'] + handlerKey
+		const delay2 = delay ?? 1000
+		const event = dataOnce(dataKey + random, (args) => {
+			resolve(args)
+		})
+
+		signalEmit(signalKey, random)
 
 		setTimeout(() => {
 			event()
