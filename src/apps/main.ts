@@ -1,9 +1,14 @@
-import { once, showUI } from '@create-figma-plugin/utilities'
-import { adapterSampleHandler, CloseHandler } from '../adapter/types'
+import { on, once, showUI } from '@create-figma-plugin/utilities'
+import { adapterSampleHandler, CloseHandler, ResizeWindowHandler } from '../adapter/types'
 import { mainUser_Adapter } from '@/domain/user/userAdapter'
 
 export default function () {
 	mainUser_Adapter()
+
+	on<ResizeWindowHandler>('RESIZE_WINDOW', function (windowSize: { width: number; height: number }) {
+		const { width, height } = windowSize
+		figma.ui.resize(width, height)
+	})
 
 	once<adapterSampleHandler>('SAMPLE', function (count: number) {
 		const nodes: Array<SceneNode> = []

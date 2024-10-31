@@ -8,6 +8,7 @@ import { emit } from '@create-figma-plugin/utilities'
 import { ResizeWindowHandler } from '../adapter/types'
 import Root from '@/pages/Root'
 import { AppProvider } from '@/domain/Provider'
+import { Parent } from '@/pages/Test'
 
 const fn = async (files: Array<File>) => {
 	const text = await files[0].text()
@@ -32,7 +33,7 @@ function Plugin() {
 			value: nav[0],
 		},
 		{
-			children: '변수 추출',
+			children: <Parent />,
 			value: nav[1],
 		},
 		{
