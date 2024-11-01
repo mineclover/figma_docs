@@ -4,7 +4,7 @@ import { useState, useEffect } from 'preact/hooks'
 
 import { rejectCheck, asyncEmit } from '../interface'
 
-import { UserDuplex } from '../duplex'
+import { DuplexType } from '../duplex'
 
 // 어뎁터는 한 번 또는 n번 선언
 // 이벤트 리스너에 이벤트가 등록되는 개념이고 메세지가 오면 키 기반으로 payload 랑 함수를 실행하는 개념
@@ -40,7 +40,7 @@ export const service = () => {
 }
 
 const a = async () => {
-	const dataTest = await asyncEmit<UserDuplex>('User')
+	const dataTest = await asyncEmit<DuplexType<'user'>>('user')
 	if (rejectCheck(dataTest)) {
 		console.log(dataTest)
 	}

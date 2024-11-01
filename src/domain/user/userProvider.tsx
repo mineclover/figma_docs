@@ -3,6 +3,8 @@ import { useContext } from 'preact/hooks'
 import { useUser_Adapter } from './userAdapter'
 import { FigmaUser } from '../types'
 
+// 프로바이더 컨텍스트로 상태 관리 예시
+// 시그널이 더 좋아서 안쓰게 됨
 export const UserContext = createContext<FigmaUser>({
 	uuid: '',
 	name: '',

@@ -1,6 +1,6 @@
 // Components.jsx
 import { effect, batch } from '@preact/signals-core'
-import { useEffect } from 'preact/hooks'
+import { useEffect, useState } from 'preact/hooks'
 import { count, multiplier, price, doubleCount, total } from './signals'
 import { h } from 'preact'
 import { UserAtom } from '@/domain/user/userAdapter'
@@ -8,8 +8,10 @@ import { UserAtom } from '@/domain/user/userAdapter'
 // 부모 컴포넌트
 export function Parent() {
 	// effect를 사용해 변경 추적
+	const [parentCount, setParentCount] = useState(0)
 	effect(() => {
 		console.log(`Parent: count changed to ${count.value}`)
+		setParentCount(count.value)
 	})
 	effect(() => {
 		console.log(`UserAtom: count changed to ${UserAtom.value}`)
@@ -17,7 +19,7 @@ export function Parent() {
 
 	return (
 		<div className="p-4">
-			<h1>시그널 전파 데모</h1>
+			<h1>시그널 전파 데모 {parentCount}</h1>
 			{JSON.stringify(UserAtom.value)}
 			<User />
 			<Counter />
@@ -30,6 +32,12 @@ export function Parent() {
 
 // 카운터 컴포넌트
 function Counter() {
+	const [innerCount, setInnerCount] = useState(0)
+	// effect(() => {
+	// 	console.log(`Parent: count changed to ${count}`)
+	// 	setCount(count)
+	// })
+
 	useEffect(() => {
 		const fetchInitialData = async () => {
 			try {
@@ -46,6 +54,7 @@ function Counter() {
 
 	effect(() => {
 		console.log(`Counter: count updated to ${count.value}`)
+		setInnerCount(count.value)
 	})
 
 	// batch를 사용하여 여러 업데이트를 한 번에 처리
@@ -58,7 +67,7 @@ function Counter() {
 
 	return (
 		<div className="mb-4">
-			<h2>카운터</h2>
+			<h2>카운터 {innerCount}</h2>
 			<p>현재 값: {count.value}</p>
 			<button onClick={() => count.value++}>증가</button>
 			<button onClick={updateMultiple}>카운트와 승수 동시 증가</button>

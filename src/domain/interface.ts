@@ -1,6 +1,6 @@
 import { on, once, emit, EventHandler } from '@create-figma-plugin/utilities'
 import { generateRandomText2 } from '../utils/textTools'
-import { Duplex, duplexKeys, DuplexKeysType } from './duplex'
+import { DuplexType, duplexKeysV1, DuplexKeysType, duplexKeys } from './duplex'
 
 /**
  * 데이터 인터페이스 제네릭이긴 한데...
@@ -33,11 +33,11 @@ export interface SignalHandler extends EventHandler {
  */
 export interface DataHandler2<T extends DuplexKeysType> extends EventHandler {
 	name: ConcatStrings2<'DATA_', T>
-	handler: (args: Extract<Duplex, { key: T }>['data']) => void
+	handler: (args: Extract<DuplexType<T>, { key: T }>['data']) => void
 }
 
-export type DataUserHandler = DataHandler2<'User'>
-on<DataUserHandler>('DATA_User', (user) => {
+export type DataUserHandler = DataHandler2<'user'>
+on<DataUserHandler>('DATA_user', (user) => {
 	console.log(user)
 })
 
@@ -47,13 +47,13 @@ on<DataUserHandler>('DATA_User', (user) => {
  */
 export interface SignalHandler2<T extends DuplexKeysType> extends EventHandler {
 	name: ConcatStrings2<'SIGNAL_', T>
-	handler: (random?: '') => void
+	handler: (random?: string) => void
 }
 /**
  * 시그널 인터페이스 v2 코드 예시
  * 받는 코드는 위에서 처리할 수 있게 구성
  */
-export type SignalUserHandler = SignalHandler2<'User'>
+export type SignalUserHandler = SignalHandler2<'user'>
 
 /** 시그널 반응
  * 랜덤 여부 맞춰서 emit 실행됨
@@ -61,7 +61,7 @@ export type SignalUserHandler = SignalHandler2<'User'>
  */
 export const signalReceiving = <T extends DuplexKeysType>(type: T, randomKey?: string) => {
 	const key = prefix['data'] + type + (randomKey ?? '')
-	return (arg: Extract<Duplex, { key: T }>['data']) => dataEmit(key, arg)
+	return (arg: Extract<DuplexType<T>, { key: T }>['data']) => dataEmit(key, arg)
 }
 
 /** v1 예시 */
@@ -75,12 +75,12 @@ export const signalOnce = once<SignalHandler>
 export const signalEmit = emit<SignalHandler>
 
 /** v2 예시 */
-export const userDataOn = on<DataHandler2<'User'>>
-export const userDataOnce = once<DataHandler2<'User'>>
-export const userDataEmit = emit<DataHandler2<'User'>>
-export const userSignalOn = on<SignalHandler2<'User'>>
-export const userSignalOnce = once<SignalHandler2<'User'>>
-export const userSignalEmit = emit<SignalHandler2<'User'>>
+export const userDataOn = on<DataHandler2<'user'>>
+export const userDataOnce = once<DataHandler2<'user'>>
+export const userDataEmit = emit<DataHandler2<'user'>>
+export const userSignalOn = on<SignalHandler2<'user'>>
+export const userSignalOnce = once<SignalHandler2<'user'>>
+export const userSignalEmit = emit<SignalHandler2<'user'>>
 
 /** v2 타입 생성 */
 export const createDataHandlers = <K extends DuplexKeysType>() => ({
@@ -94,15 +94,15 @@ export const createDataHandlers = <K extends DuplexKeysType>() => ({
 
 /** v2 타입 생성 예시 */
 
-export const memoHandlers = createDataHandlers<'Memo'>()
-export const sectionHandlers = createDataHandlers<'Section'>()
-sectionHandlers.dataOn('DATA_Section', (section) => {
+export const memoHandlers = createDataHandlers<'memo'>()
+export const sectionHandlers = createDataHandlers<'section'>()
+sectionHandlers.dataOn('DATA_section', (section) => {
 	console.log(section)
 })
 
 /**
  * v3는... 아래 느낌으로 생각하고 있는데 ...args 처리가 더 세밀하게 들어가야해서 방법은 아닌 걸로 보임
- * const userSignalEmit2 = (...args: Parameters<typeof userSignalEmit>) => emit<SignalHandler2<'User'>>('SIGNAL_User', ...args)
+ * const userSignalEmit2 = (...args: Parameters<typeof userSignalEmit>) => emit<SignalHandler2<'user'>>('SIGNAL_User', ...args)
  */
 
 /** 실행 여부 판단용 */
@@ -142,7 +142,7 @@ export const prefix = {
  * 저장하는 adapter main에는 adapter 만 넣어야 함
  * 호출 키랑 응답 값이 다름
  * 호출 어뎁터랑 응답 어뎁터가 달라서 실별자 정의 해야함
- * asyncEmit<UserDuplex>('User')
+ * asyncEmit<UserDuplex>('user')
  */
 export const asyncEmit = <T extends Record<'key' | 'data', any>>(handlerKey: T['key'], delay?: number) =>
 	new Promise<T['data'] | typeof rejectSymbol>((resolve, reject) => {
@@ -163,13 +163,13 @@ export const asyncEmit = <T extends Record<'key' | 'data', any>>(handlerKey: T['
 	})
 
 /**
- * asyncEmit('User')
+ * asyncEmit('user')
  * @param handlerKey
  * @param delay
  * @returns
  */
 export const asyncEmit2 = <T extends DuplexKeysType>(handlerKey: T, delay?: number) =>
-	new Promise<Extract<Duplex, { key: T }>['data'] | typeof rejectSymbol>((resolve, reject) => {
+	new Promise<Extract<DuplexType<T>, { key: T }>['data'] | typeof rejectSymbol>((resolve, reject) => {
 		const random = generateRandomText2()
 		const signalKey = prefix['signal'] + handlerKey
 		const dataKey = prefix['data'] + handlerKey
@@ -189,26 +189,23 @@ export const asyncEmit2 = <T extends DuplexKeysType>(handlerKey: T, delay?: numb
 // 타입 정의
 type ConcatStrings<A extends string, B extends string> = `${A}${B}`
 
-export type ConcatStrings2<
-	A extends (typeof prefix)[keyof typeof prefix],
-	B extends (typeof duplexKeys)[keyof typeof duplexKeys],
-> = `${A}${B}`
+export type ConcatStrings2<A extends (typeof prefix)[keyof typeof prefix], B extends DuplexKeysType> = `${A}${B}`
 
 // 문자열을 합치고 타입을 추론하는 함수
 function concatWithType<A extends string, B extends string>(a: A, b: B): ConcatStrings<A, B> {
 	return `${a}${b}` as const
 }
 
-export function concatWithType2<
-	A extends (typeof prefix)[keyof typeof prefix],
-	B extends (typeof duplexKeys)[keyof typeof duplexKeys],
->(a: A, b: B): ConcatStrings<A, B> {
+export function concatWithType2<A extends (typeof prefix)[keyof typeof prefix], B extends DuplexKeysType>(
+	a: A,
+	b: B
+): ConcatStrings<A, B> {
 	return `${a}${b}` as const
 }
 
-export function concatWithType3<A extends keyof typeof prefix, B extends keyof typeof duplexKeys>(
+export function concatWithType3<A extends keyof typeof prefix, B extends keyof typeof duplexKeysV1>(
 	a: A,
 	b: B
-): ConcatStrings<(typeof prefix)[A], (typeof duplexKeys)[B]> {
-	return `${prefix[a]}${duplexKeys[b]}` as const
+): ConcatStrings<(typeof prefix)[A], (typeof duplexKeysV1)[B]> {
+	return `${prefix[a]}${duplexKeysV1[b]}` as const
 }

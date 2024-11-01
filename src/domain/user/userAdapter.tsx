@@ -6,32 +6,33 @@ import { FigmaUser } from '../types'
 
 import { DataHandler2, SignalHandler2, userDataOn, userSignalEmit, userDataEmit, signalReceiving } from '../interface'
 import { getUserModel, setUserName } from './userModel'
+import { ComponentChildren, Fragment } from 'preact'
 
-type DataUserHandler = DataHandler2<'User'>
-type SignalUserHandler = SignalHandler2<'User'>
+type DataUserHandler = DataHandler2<'user'>
+type SignalUserHandler = SignalHandler2<'user'>
 
 /**
  * 데이터 전송 어댑터
  */
 export const mainUser_Adapter = () => {
-	userDataOn('DATA_User', async (user) => {
+	userDataOn('DATA_user', async (user) => {
 		const originUser = await getUserModel()
 		if (originUser.name !== user.name) {
 			setUserName(user.name)
 
 			// 변경 시 전송
-			userDataEmit('DATA_User', user)
+			userDataEmit('DATA_user', user)
 		}
 	})
-	on<SignalUserHandler>('SIGNAL_User', async (key) => {
+	on<SignalUserHandler>('SIGNAL_user', async (key) => {
 		const user = await getUserModel()
 
-		signalReceiving('User', key)(user)
+		signalReceiving('user', key)(user)
 	})
 }
 //
 
-export const sampleDataEmit = emit<DataHandler2<'User'>>
+export const sampleDataEmit = emit<DataHandler2<'user'>>
 
 export const UserAtom = signal<FigmaUser>({
 	uuid: '',
@@ -54,14 +55,15 @@ export const useUser_Adapter = () => {
 	useEffect(() => {
 		// 항상 열려있는 인터페이스
 		// 값이 저장되는 공간이 따로 있기 때문에 setState 를 쓰지 않음
+
 		// 공식 루트
-		const event = userDataOn('DATA_User', (user) => {
+		const event = userDataOn('DATA_user', (user) => {
 			setUser(user)
 		})
 
 		// 시그널도 열어야하는 값은 아닌 거 같음
 		// 받을 키로 전달해서 값을 받게 함
-		userSignalEmit('SIGNAL_User')
+		userSignalEmit('SIGNAL_user')
 
 		return () => {
 			event()
@@ -70,23 +72,25 @@ export const useUser_Adapter = () => {
 	return user
 }
 
-/**
- * 시그널 되서 다시 만듬
- */
-// export const User_Adapter = () => {
-// 	useLayoutEffect(() => {
-// 		// 항상 열려있는 인터페이스
-// 		// 공식 루트
-// 		const event = userDataOn('DATA_User', (user) => {
-// 			UserAtom.value = user
-// 		})
-// 		// 시그널도 열어야하는 값은 아닌 거 같음
-// 		// 받을 키로 전달해서 값을 받게 함
-// 		userSignalEmit('SIGNAL_User')
+// 이 구성에서 필요한 구성은
+// 1. 저장할 시그널을 참조할 수 있게 객체에 담아서 전달
+// 2. 그 객체를 참조하도록 함수 실행
+// 3. unmount 될 때 이벤트 제거
 
-// 		return () => {
-// 			event()
-// 		}
-// 	}, [])
-// 	return null
-// }
+import { h } from 'preact'
+export const User_Adapter = ({ children }: { children: ComponentChildren }) => {
+	useLayoutEffect(() => {
+		// 항상 열려있는 인터페이스
+		// 공식 루트
+		const event = userDataOn('DATA_user', (user) => {
+			UserAtom.value = user
+		})
+		userSignalEmit('SIGNAL_user')
+
+		return () => {
+			event()
+		}
+	}, [])
+	// 솔직히 진짜 무식한 코드임 이벤트 나올 때마다 전체 리프래쉬 보내버리는 거임
+	return <Fragment>{children}</Fragment>
+}

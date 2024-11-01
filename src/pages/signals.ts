@@ -1,5 +1,5 @@
 // signals.js
-import { signal, computed, batch, effect } from '@preact/signals-core'
+import { signal, computed } from '@preact/signals-core'
 
 export const count = signal(0)
 export const multiplier = signal(2)
