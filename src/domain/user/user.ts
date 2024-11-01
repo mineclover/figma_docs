@@ -39,9 +39,12 @@ export const service = () => {
 	repository(data)
 }
 
+/** 예시 */
 const a = async () => {
-	const dataTest = await asyncEmit<DuplexType<'user'>>('user')
+	const dataTest = await asyncEmit<'user'>('user')
 	if (rejectCheck(dataTest)) {
 		console.log(dataTest)
+	} else {
+		console.log('user asyncEmit timeout error')
 	}
 }

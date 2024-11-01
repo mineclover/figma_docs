@@ -4,12 +4,19 @@ import { useState, useEffect, useLayoutEffect } from 'preact/hooks'
 import { signal, computed } from '@preact/signals-core'
 import { FigmaUser } from '../types'
 
-import { DataHandler2, SignalHandler2, userDataOn, userSignalEmit, userDataEmit, signalReceiving } from '../interface'
+import {
+	DuplexDataHandler,
+	DuplexSignalHandler,
+	userDataOn,
+	userSignalEmit,
+	userDataEmit,
+	signalReceiving,
+} from '../interface'
 import { getUserModel, setUserName } from './userModel'
 import { ComponentChildren, Fragment } from 'preact'
 
-type DataUserHandler = DataHandler2<'user'>
-type SignalUserHandler = SignalHandler2<'user'>
+type DataUserHandler = DuplexDataHandler<'user'>
+type SignalUserHandler = DuplexSignalHandler<'user'>
 
 /**
  * 데이터 전송 어댑터
@@ -32,7 +39,7 @@ export const mainUser_Adapter = () => {
 }
 //
 
-export const sampleDataEmit = emit<DataHandler2<'user'>>
+export const sampleDataEmit = emit<DuplexDataHandler<'user'>>
 
 export const UserAtom = signal<FigmaUser>({
 	uuid: '',

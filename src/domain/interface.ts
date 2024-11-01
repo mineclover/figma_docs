@@ -31,12 +31,12 @@ export interface SignalHandler extends EventHandler {
  * Duplex 호환
  * 데이터 인터페이스 v2
  */
-export interface DataHandler2<T extends DuplexKeysType> extends EventHandler {
+export interface DuplexDataHandler<T extends DuplexKeysType> extends EventHandler {
 	name: ConcatStrings2<'DATA_', T>
 	handler: (args: Extract<DuplexType<T>, { key: T }>['data']) => void
 }
 
-export type DataUserHandler = DataHandler2<'user'>
+export type DataUserHandler = DuplexDataHandler<'user'>
 on<DataUserHandler>('DATA_user', (user) => {
 	console.log(user)
 })
@@ -45,7 +45,7 @@ on<DataUserHandler>('DATA_user', (user) => {
  * Duplex 호환
  * 시그널 인터페이스 v2
  */
-export interface SignalHandler2<T extends DuplexKeysType> extends EventHandler {
+export interface DuplexSignalHandler<T extends DuplexKeysType> extends EventHandler {
 	name: ConcatStrings2<'SIGNAL_', T>
 	handler: (random?: string) => void
 }
@@ -53,7 +53,7 @@ export interface SignalHandler2<T extends DuplexKeysType> extends EventHandler {
  * 시그널 인터페이스 v2 코드 예시
  * 받는 코드는 위에서 처리할 수 있게 구성
  */
-export type SignalUserHandler = SignalHandler2<'user'>
+export type SignalUserHandler = DuplexSignalHandler<'user'>
 
 /** 시그널 반응
  * 랜덤 여부 맞춰서 emit 실행됨
@@ -75,21 +75,21 @@ export const signalOnce = once<SignalHandler>
 export const signalEmit = emit<SignalHandler>
 
 /** v2 예시 */
-export const userDataOn = on<DataHandler2<'user'>>
-export const userDataOnce = once<DataHandler2<'user'>>
-export const userDataEmit = emit<DataHandler2<'user'>>
-export const userSignalOn = on<SignalHandler2<'user'>>
-export const userSignalOnce = once<SignalHandler2<'user'>>
-export const userSignalEmit = emit<SignalHandler2<'user'>>
+export const userDataOn = on<DuplexDataHandler<'user'>>
+export const userDataOnce = once<DuplexDataHandler<'user'>>
+export const userDataEmit = emit<DuplexDataHandler<'user'>>
+export const userSignalOn = on<DuplexSignalHandler<'user'>>
+export const userSignalOnce = once<DuplexSignalHandler<'user'>>
+export const userSignalEmit = emit<DuplexSignalHandler<'user'>>
 
 /** v2 타입 생성 */
 export const createDataHandlers = <K extends DuplexKeysType>() => ({
-	dataOn: on<DataHandler2<K>>,
-	dataOnce: once<DataHandler2<K>>,
-	dataEmit: emit<DataHandler2<K>>,
-	signalOn: on<SignalHandler2<K>>,
-	signalOnce: once<SignalHandler2<K>>,
-	signalEmit: emit<SignalHandler2<K>>,
+	dataOn: on<DuplexDataHandler<K>>,
+	dataOnce: once<DuplexDataHandler<K>>,
+	dataEmit: emit<DuplexDataHandler<K>>,
+	signalOn: on<DuplexSignalHandler<K>>,
+	signalOnce: once<DuplexSignalHandler<K>>,
+	signalEmit: emit<DuplexSignalHandler<K>>,
 })
 
 /** v2 타입 생성 예시 */
@@ -141,26 +141,9 @@ export const prefix = {
  * 일회용 호출
  * 저장하는 adapter main에는 adapter 만 넣어야 함
  * 호출 키랑 응답 값이 다름
- * 호출 어뎁터랑 응답 어뎁터가 달라서 실별자 정의 해야함
+ * 호출 어뎁터랑 응답 어뎁터가 달라서 식별자 정의 해야함
  * asyncEmit<UserDuplex>('user')
  */
-export const asyncEmit = <T extends Record<'key' | 'data', any>>(handlerKey: T['key'], delay?: number) =>
-	new Promise<T['data'] | typeof rejectSymbol>((resolve, reject) => {
-		const random = generateRandomText2()
-		const signalKey = prefix['signal'] + handlerKey
-		const dataKey = prefix['data'] + handlerKey
-		const delay2 = delay ?? 1000
-		const event = dataOnce(dataKey + random, (args) => {
-			resolve(args)
-		})
-
-		signalEmit(signalKey, random)
-
-		setTimeout(() => {
-			event()
-			reject(rejectSymbol)
-		}, delay2)
-	})
 
 /**
  * asyncEmit('user')
@@ -168,7 +151,7 @@ export const asyncEmit = <T extends Record<'key' | 'data', any>>(handlerKey: T['
  * @param delay
  * @returns
  */
-export const asyncEmit2 = <T extends DuplexKeysType>(handlerKey: T, delay?: number) =>
+export const asyncEmit = <T extends DuplexKeysType>(handlerKey: T, delay?: number) =>
 	new Promise<Extract<DuplexType<T>, { key: T }>['data'] | typeof rejectSymbol>((resolve, reject) => {
 		const random = generateRandomText2()
 		const signalKey = prefix['signal'] + handlerKey
