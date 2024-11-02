@@ -1,7 +1,7 @@
 import { h } from 'preact'
 // import { useUser } from './userProvider'
 import { userDataEmit } from '../interface'
-import { UserAtom, useUser_Adapter } from './userAdapter'
+import { UserAtom } from './userAdapter'
 import { useSignal } from '@/hooks/useSignal'
 
 function UserPage() {

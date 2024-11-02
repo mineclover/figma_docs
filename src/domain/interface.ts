@@ -1,6 +1,6 @@
 import { on, once, emit, EventHandler } from '@create-figma-plugin/utilities'
 import { generateRandomText2 } from '../utils/textTools'
-import { DuplexType, duplexKeysV1, DuplexKeysType, duplexKeys } from './duplex'
+import { DuplexKeysType, DynamicDuplexType } from './duplex'
 
 /**
  * 데이터 인터페이스 제네릭이긴 한데...
@@ -32,8 +32,8 @@ export interface SignalHandler extends EventHandler {
  * 데이터 인터페이스 v2
  */
 export interface DuplexDataHandler<T extends DuplexKeysType> extends EventHandler {
-	name: ConcatStrings2<'DATA_', T>
-	handler: (args: Extract<DuplexType<T>, { key: T }>['data']) => void
+	name: DuplexConcatStrings<'DATA_', T>
+	handler: (args: DynamicDuplexType<T>['data']) => void
 }
 
 export type DataUserHandler = DuplexDataHandler<'user'>
@@ -46,7 +46,7 @@ on<DataUserHandler>('DATA_user', (user) => {
  * 시그널 인터페이스 v2
  */
 export interface DuplexSignalHandler<T extends DuplexKeysType> extends EventHandler {
-	name: ConcatStrings2<'SIGNAL_', T>
+	name: DuplexConcatStrings<'SIGNAL_', T>
 	handler: (random?: string) => void
 }
 /**
@@ -57,16 +57,16 @@ export type SignalUserHandler = DuplexSignalHandler<'user'>
 
 /** 시그널 반응
  * 랜덤 여부 맞춰서 emit 실행됨
- * key에 random 없는 취급해도 됬음
+ * key에 random 없으면 공백으로 처리
  */
 export const signalReceiving = <T extends DuplexKeysType>(type: T, randomKey?: string) => {
 	const key = prefix['data'] + type + (randomKey ?? '')
-	return (arg: Extract<DuplexType<T>, { key: T }>['data']) => dataEmit(key, arg)
+	return (arg: DynamicDuplexType<T>['data']) => dataEmit(key, arg)
 }
 
 /** v1 예시 */
 // 써도 되는 구간은 정해진 키를 기반으로 정해진 호출이 있어서 괜찮긴 했음
-// 비슷하게 duplexKeys base로 키에 맞춰서 자동 추론하는 것도 가능해보여서 v2 만듬
+// 비슷하게 duplexKeys base로 키에 맞춰서 handler 파라미터 자동 추론하는 것도 가능해보여서 v2 만듬
 export const dataOn = on<DataHandler>
 export const dataOnce = once<DataHandler>
 export const dataEmit = emit<DataHandler>
@@ -82,7 +82,10 @@ export const userSignalOn = on<DuplexSignalHandler<'user'>>
 export const userSignalOnce = once<DuplexSignalHandler<'user'>>
 export const userSignalEmit = emit<DuplexSignalHandler<'user'>>
 
-/** v2 타입 생성 */
+/**
+ * v2 기반으로 action 들에 키 부여
+ * 좀 더 추상화 가능해 보임
+ */
 export const createDataHandlers = <K extends DuplexKeysType>() => ({
 	dataOn: on<DuplexDataHandler<K>>,
 	dataOnce: once<DuplexDataHandler<K>>,
@@ -152,7 +155,7 @@ export const prefix = {
  * @returns
  */
 export const asyncEmit = <T extends DuplexKeysType>(handlerKey: T, delay?: number) =>
-	new Promise<Extract<DuplexType<T>, { key: T }>['data'] | typeof rejectSymbol>((resolve, reject) => {
+	new Promise<DynamicDuplexType<T>['data'] | typeof rejectSymbol>((resolve, reject) => {
 		const random = generateRandomText2()
 		const signalKey = prefix['signal'] + handlerKey
 		const dataKey = prefix['data'] + handlerKey
@@ -169,26 +172,34 @@ export const asyncEmit = <T extends DuplexKeysType>(handlerKey: T, delay?: numbe
 		}, delay2)
 	})
 
-// 타입 정의
+// enum 키 합성 타입 정의
 type ConcatStrings<A extends string, B extends string> = `${A}${B}`
 
-export type ConcatStrings2<A extends (typeof prefix)[keyof typeof prefix], B extends DuplexKeysType> = `${A}${B}`
+// duplex 용 enum 키 합성 타입 정의
+export type DuplexConcatStrings<A extends (typeof prefix)[keyof typeof prefix], B extends DuplexKeysType> = `${A}${B}`
 
 // 문자열을 합치고 타입을 추론하는 함수
 function concatWithType<A extends string, B extends string>(a: A, b: B): ConcatStrings<A, B> {
 	return `${a}${b}` as const
 }
 
-export function concatWithType2<A extends (typeof prefix)[keyof typeof prefix], B extends DuplexKeysType>(
+/**
+ * duplex 용 문자열을 합치고 타입을 추론하는 함수
+ *  */
+export function duplexConcatWithType<A extends (typeof prefix)[keyof typeof prefix], B extends DuplexKeysType>(
 	a: A,
 	b: B
 ): ConcatStrings<A, B> {
 	return `${a}${b}` as const
 }
 
-export function concatWithType3<A extends keyof typeof prefix, B extends keyof typeof duplexKeysV1>(
+/**
+ * duplex 용 문자열을 합치고 타입을 추론하는 함수
+ * 키 타입을 prefix로 넣을 수 있어서 더 편함
+ */
+export function duplexConcatWithType2<A extends keyof typeof prefix, B extends DuplexKeysType>(
 	a: A,
 	b: B
-): ConcatStrings<(typeof prefix)[A], (typeof duplexKeysV1)[B]> {
-	return `${prefix[a]}${duplexKeysV1[b]}` as const
+): DuplexConcatStrings<(typeof prefix)[A], B> {
+	return `${prefix[a]}${b}` as const
 }
