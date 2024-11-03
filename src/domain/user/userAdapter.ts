@@ -1,15 +1,17 @@
-import { on, emit } from '@create-figma-plugin/utilities'
+import { on, once, emit } from '@create-figma-plugin/utilities'
 
 import { signal } from '@preact/signals-core'
 import { FigmaUser } from '../types'
 
-import { DuplexDataHandler, DuplexSignalHandler, userDataOn, userDataEmit, signalReceiving } from '../interface'
+import { createDataHandlers, DuplexDataHandler, DuplexSignalHandler, signalReceiving } from '../interface'
 import { getUserModel, setUserName } from './userModel'
 
 /** duplex 데이터 전송 핸들러 예시 */
 type DataUserHandler = DuplexDataHandler<'user'>
 /** duplex 신호 전송 핸들러 예시 */
 type SignalUserHandler = DuplexSignalHandler<'user'>
+
+export const { dataOn, dataOnce, dataEmit, signalOn, signalOnce, signalEmit } = createDataHandlers<'user'>()
 
 // 단순 데이터 처리 이외에 처리 위임 형태를 만드는게 진짜기 때문에 빠르게 작업하고 넘어갈 것
 /**
@@ -19,14 +21,18 @@ type SignalUserHandler = DuplexSignalHandler<'user'>
  * 비교 처리를 모듈로 받아서 처리하면 ui에서 시그널에 위임한 것 처럼 간소됨
  */
 export const mainUser_Adapter = () => {
-	userDataOn('DATA_user', async (user) => {
+	dataOn('DATA_user', async (user) => {
 		const originUser = await getUserModel()
 		// 변경 시 전송
 		if (originUser.name !== user.name) {
 			/** 저장하는 모델 코드임 */
 			setUserName(user.name)
 			/** 동기화 처리 */
-			userDataEmit('DATA_user', user)
+
+			dataEmit('DATA_user', {
+				uuid: user.uuid,
+				name: user.name + 'sync',
+			})
 		}
 	})
 	on<SignalUserHandler>('SIGNAL_user', async (key) => {

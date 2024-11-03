@@ -9,6 +9,8 @@ import { ResizeWindowHandler } from '../adapter/types'
 import Root from '@/pages/Root'
 import { AppProvider } from '@/domain/Provider'
 import { Parent } from '@/pages/Test'
+import UserPage from '@/domain/user/UserPage'
+import SectionPage from '@/domain/section/SectionPage'
 
 const fn = async (files: Array<File>) => {
 	const text = await files[0].text()
@@ -25,23 +27,23 @@ function Plugin() {
 		minWidth: 120,
 		resizeBehaviorOnDoubleClick: 'minimize',
 	})
-	const nav = ['SVG 생성기', '변수 추출', 'SVG 정보 자동완성']
+	const nav = ['preact demo', 'user', 'section', 'section']
 
 	const options: Array<TabsOption> = [
 		{
-			children: <Root />,
+			children: <Parent />,
 			value: nav[0],
 		},
 		{
-			children: <Parent />,
+			children: <UserPage />,
 			value: nav[1],
 		},
 		{
-			children: 'SVG 정보 자동완성',
+			children: <SectionPage />,
 			value: nav[2],
 		},
 	] as const
-	const [value, setValue] = useState<string>('SVG 생성기')
+	const [value, setValue] = useState<string>(nav[1])
 
 	function handleChange(
 		//  event: NonNullableComponentTypeExtract<typeof Tabs, 'onChange'>

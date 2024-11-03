@@ -39,7 +39,7 @@ export const service = () => {
 	repository(data)
 }
 
-/** 예시 */
+/** 일회용 조회 콜 예시 */
 const a = async () => {
 	const dataTest = await asyncEmit<'user'>('user')
 	if (rejectCheck(dataTest)) {

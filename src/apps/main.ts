@@ -1,10 +1,11 @@
 import { on, once, showUI } from '@create-figma-plugin/utilities'
 import { adapterSampleHandler, CloseHandler, ResizeWindowHandler } from '../adapter/types'
 import { mainUser_Adapter } from '@/domain/user/userAdapter'
+import { mainSectionList_Adapter } from '@/domain/section/sectionAdapter'
 
 export default function () {
 	mainUser_Adapter()
-
+	mainSectionList_Adapter()
 	on<ResizeWindowHandler>('RESIZE_WINDOW', function (windowSize: { width: number; height: number }) {
 		const { width, height } = windowSize
 		figma.ui.resize(width, height)
@@ -32,7 +33,7 @@ export default function () {
 		figma.closePlugin()
 	})
 	showUI({
-		height: 137,
+		height: 400,
 		width: 240,
 	})
 }

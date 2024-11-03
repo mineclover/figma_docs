@@ -5,7 +5,7 @@ import styles from './root.module.css'
 function Root() {
 	return (
 		<div className={styles.root}>
-			ㅁㄴㅇㄹ
+			User
 			<UserPage></UserPage>
 		</div>
 	)

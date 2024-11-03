@@ -1,21 +1,35 @@
 import { h } from 'preact'
 // import { useUser } from './userProvider'
-import { userDataEmit } from '../interface'
+
 import { UserAtom } from './userAdapter'
 import { useSignal } from '@/hooks/useSignal'
+import { useEffect, useState } from 'preact/hooks'
+import { dataEmit, DuplexDataHandler } from '../interface'
+import { emit } from '@create-figma-plugin/utilities'
 
 function UserPage() {
-	// const user = useUser_Adapter()
 	const user = useSignal(UserAtom)
+	const [name, setName] = useState(user.name)
+	const [uuid, setUuid] = useState(user.uuid)
+
+	useEffect(() => {
+		setName(user.name)
+		setUuid(user.uuid)
+	}, [user])
+
 	return (
 		<div>
-			<span>{user.name}</span>
-			<span>{user.uuid}</span>
+			<h1>user</h1>
+			<span>{name}</span>
+			<span>{uuid}</span>
+			<br />
+			<input type="text" value={name} onChange={(e) => setName(e.currentTarget.value)} />
+			<input type="text" value={uuid} onChange={(e) => setUuid(e.currentTarget.value)} />
 			<button
 				onClick={() =>
-					userDataEmit('DATA_user', {
-						uuid: user.uuid,
-						name: 'user',
+					emit<DuplexDataHandler<'user'>>('DATA_user', {
+						uuid: uuid,
+						name: name,
 					})
 				}
 			>

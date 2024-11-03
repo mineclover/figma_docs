@@ -75,12 +75,12 @@ export const signalOnce = once<SignalHandler>
 export const signalEmit = emit<SignalHandler>
 
 /** v2 예시 */
-export const userDataOn = on<DuplexDataHandler<'user'>>
-export const userDataOnce = once<DuplexDataHandler<'user'>>
-export const userDataEmit = emit<DuplexDataHandler<'user'>>
-export const userSignalOn = on<DuplexSignalHandler<'user'>>
-export const userSignalOnce = once<DuplexSignalHandler<'user'>>
-export const userSignalEmit = emit<DuplexSignalHandler<'user'>>
+// export const userDataOn = on<DuplexDataHandler<'user'>>
+// export const userDataOnce = once<DuplexDataHandler<'user'>>
+// export const userDataEmit = emit<DuplexDataHandler<'user'>>
+// export const userSignalOn = on<DuplexSignalHandler<'user'>>
+// export const userSignalOnce = once<DuplexSignalHandler<'user'>>
+// export const userSignalEmit = emit<DuplexSignalHandler<'user'>>
 
 /**
  * v2 기반으로 action 들에 키 부여
@@ -97,7 +97,7 @@ export const createDataHandlers = <K extends DuplexKeysType>() => ({
 
 /** v2 타입 생성 예시 */
 
-export const memoHandlers = createDataHandlers<'memo'>()
+export const memoHandlers = createDataHandlers<'memos'>()
 export const sectionHandlers = createDataHandlers<'section'>()
 sectionHandlers.dataOn('DATA_section', (section) => {
 	console.log(section)
@@ -115,6 +115,10 @@ export const rejectCheck = <T>(value: T | typeof rejectSymbol): value is T => {
 	return value !== rejectSymbol
 }
 
+export const filterEmpty = <T>(value: T | '') => {
+	return value === '' ? false : true
+}
+
 /** 데이터에 고유 식별 걸어주는게 좋지 않을까 */
 
 // 키벨류 key value
@@ -129,6 +133,9 @@ export const rejectCheck = <T>(value: T | typeof rejectSymbol): value is T => {
  * 데이터는 입력할 때 {prefix}_{key} 데이터로 보낸다
  * generateRandomText2 쓰지 않는 기본 리스너는 on으로 정의해서 항상 받도록 구성
  */
+
+// const text1 = '\u27C5'
+// const text2 = '\u27C6'
 export const prefix = {
 	/** 데이터 요청
 	 * 받는 곳에서 똑같이 처리해주면 됨
@@ -138,6 +145,8 @@ export const prefix = {
 	data: 'DATA_',
 	memo: 'MEMO_',
 	user: 'USER_',
+	sectionList: '⟅SECTION_LIST⟆',
+	memoList: '⟅MEMO_LIST⟆',
 } as const
 
 /**
