@@ -1,7 +1,8 @@
 import { generateRandomText2 } from '@/utils/textTools'
 import { prefix } from '@/domain/interface'
-import { FigmaUser, MEMO_KEY, Section, SectionID, SectionList } from '@/domain/types'
+import { CurrentSectionInfo, FigmaUser, MEMO_KEY, Section, SectionID, SectionList } from '@/domain/types'
 import { getMemoModel, memoCheck, setMemoModel } from '../memo/memoModel'
+import { FilePathNodeSearch } from '@/figmaPluginUtils'
 
 /** 데이터 수정을 덮어씌우는 것보다 지정 키를 없애는 것이 좋음 */
 export const getSectionModel = (key: SectionID) => {
@@ -29,6 +30,41 @@ export const getSectionListModel = () => {
 		return []
 	}
 	return JSON.parse(sectionList) as SectionList
+}
+
+export const getCurrentSelection = () => {
+	if (figma.currentPage.selection.length === 1) {
+		const node = figma.currentPage.selection[0]
+		return node
+	}
+	return null
+}
+
+export const getCurrentPage = () => {
+	return figma.currentPage
+}
+
+export const getCurrentSectionModel = (node: BaseNode) => {
+	if (node) {
+		const paths = FilePathNodeSearch(node)
+		const sectionInfo: CurrentSectionInfo[] = paths.map((node) => {
+			return {
+				id: node.id,
+				name: node.name,
+				type: node.type,
+				alias: node.getPluginData('alias'),
+			}
+		})
+		return sectionInfo
+	}
+	//메세지 처리하거나 무시하거나 데이터가 없으면 처리하지 않게하는게 맞다
+
+	return null
+}
+
+export const setCurrentSectionModel = (input: CurrentSectionInfo) => {
+	figma.root.setPluginData(prefix.currentSection, JSON.stringify(input))
+	return input
 }
 
 /**

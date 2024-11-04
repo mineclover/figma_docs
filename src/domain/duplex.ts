@@ -3,7 +3,7 @@ import { FigmaUser, Memo, Section, SectionList } from './types'
 import { on, once, emit, EventHandler, getTotalUseCountAsync } from '@create-figma-plugin/utilities'
 import { UserAtom } from './user/userAdapter'
 import { Signal } from '@preact/signals-core'
-import { HotTopicListAtom, SectionAtom, SectionListAtom } from './section/sectionAdapter'
+import { CurrentSectionAtom, HotTopicListAtom, SectionAtom, SectionListAtom } from './section/sectionAdapter'
 import { MemoAtom, MemoListAtom, MemosAtom } from './memo/memoAdapter'
 
 /** 이 타입이 중앙 관제 타입 v1 */
@@ -24,8 +24,8 @@ export const duplexKeysAndSignal = {
 	memoList: MemoListAtom,
 	section: SectionAtom,
 	sectionList: SectionListAtom,
-
 	hotTopicList: HotTopicListAtom,
+	currentSection: CurrentSectionAtom,
 } as const
 
 /** 이 타입이 중앙 관제 타입 v2 의 키 타입 */

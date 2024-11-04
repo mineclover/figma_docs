@@ -29,7 +29,7 @@ export const Duplex_Adapter = ({ children }: { children: ComponentChildren }) =>
 	useLayoutEffect(() => {
 		// 항상 열려있는 인터페이스
 		// 공식 루트
-		const events = [DuplexEmit('user'), DuplexEmit('sectionList')]
+		const events = [DuplexEmit('user'), DuplexEmit('section'), DuplexEmit('sectionList'), DuplexEmit('currentSection')]
 
 		return () => {
 			events.forEach((event) => event())

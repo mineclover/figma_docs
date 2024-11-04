@@ -44,3 +44,11 @@ export type Section = Record<SectionID, MEMO_KEY[]>
  * [1.1.1, 1.1.2]
  */
 export type SectionList = SectionID[]
+
+export type CurrentSectionInfo = {
+	id: string
+	name: string
+	// type: (typeof linkPathNodeType)[number]
+	type: string
+	alias: string
+}

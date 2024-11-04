@@ -1,33 +1,39 @@
 import { h } from 'preact'
 import { useSignal } from '@/hooks/useSignal'
 import { useEffect, useState } from 'preact/hooks'
-import { SectionListAtom } from './sectionAdapter'
+import { CurrentSectionAtom, SectionListAtom } from './sectionAdapter'
 import { dataEmitList } from './sectionAdapter'
 import { DuplexDataHandler } from '../interface'
+import { CurrentSectionInfo, SectionList } from '../types'
 
 function SectionPage() {
 	const sectionList = useSignal(SectionListAtom)
-	const [sections, setSections] = useState<string[]>(sectionList)
+	const currentSection = useSignal(CurrentSectionAtom)
+
 	const [newSection, setNewSection] = useState<string>('')
 
-	useEffect(() => {
-		setSections(sectionList)
-	}, [sectionList])
-
 	const handleSectionUpdate = () => {
-		dataEmitList('DATA_sectionList', sections)
+		dataEmitList('DATA_sectionList', [...sectionList, newSection.trim()])
+	}
+
+	const handleCurrentSectionUpdate = (input: SectionList) => {
+		dataEmitList('DATA_sectionList', input)
 	}
 
 	const handleAddSection = () => {
 		if (newSection.trim()) {
-			setSections([...sections, newSection.trim()])
+			handleSectionUpdate()
 			setNewSection('')
 		}
 	}
 
 	return (
 		<div>
-			<h1>섹션 목록</h1>
+			<h2>현재 섹션</h2>
+			<div>{currentSection.map((section) => section.name).join('/')}</div>
+			<div>{currentSection.map((section) => section.id).join('/')}</div>
+
+			<h2>섹션 목록</h2>
 			<div>
 				<input
 					type="text"
@@ -39,21 +45,14 @@ function SectionPage() {
 			</div>
 			<button onClick={handleSectionUpdate}>저장</button>
 			<div>
-				{sections.map((sectionId, index) => (
+				{sectionList.map((sectionId, index) => (
 					<div key={sectionId}>
-						<input
-							type="text"
-							value={sectionId}
-							onChange={(e) => {
-								const newSections = [...sections]
-								newSections[index] = e.currentTarget.value
-								setSections(newSections)
-							}}
-						/>
+						<div>{sectionId}</div>
+
 						<button
 							onClick={() => {
-								const newSections = sections.filter((_, i) => i !== index)
-								setSections(newSections)
+								const newSections = sectionList.filter((_, i) => i !== index)
+								handleCurrentSectionUpdate(newSections)
 							}}
 						>
 							삭제

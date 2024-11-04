@@ -1,7 +1,7 @@
 import { on, once, emit } from '@create-figma-plugin/utilities'
 
 import { signal } from '@preact/signals-core'
-import { FigmaUser, MEMO_KEY, Section, SectionList } from '../types'
+import { CurrentSectionInfo, FigmaUser, MEMO_KEY, Section, SectionList } from '../types'
 
 import { createDataHandlers, DuplexDataHandler, DuplexSignalHandler, signalReceiving } from '../interface'
 import {
@@ -10,6 +10,8 @@ import {
 	setSectionListModel,
 	setSectionModel,
 	getSectionListModel,
+	getCurrentSelection,
+	getCurrentSectionModel,
 } from './sectionModel'
 
 /** duplex 데이터 전송 핸들러 예시 */
@@ -27,6 +29,15 @@ export const {
 	signalEmit: signalEmitList,
 } = createDataHandlers<'sectionList'>()
 
+export const {
+	dataOn: dataOnCurrentSection,
+	dataOnce: dataOnceCurrentSection,
+	dataEmit: dataEmitCurrentSection,
+	signalOn: signalOnCurrentSection,
+	signalOnce: signalOnceCurrentSection,
+	signalEmit: signalEmitCurrentSection,
+} = createDataHandlers<'currentSection'>()
+
 // 단순 데이터 처리 이외에 처리 위임 형태를 만드는게 진짜기 때문에 빠르게 작업하고 넘어갈 것
 
 // 섹션은 원하는 위치에 메모데이터를 넣는 역할임
@@ -35,7 +46,8 @@ export const {
  * main 이벤트 핸들러
  * 저장과 응답 코드 처리
  * 여기도 처리 로직이 비슷함
- * 비교 처리를 모듈로 받아서 처리하면 ui에서 시그널에 위임한 것 처럼 간소됨
+ * 비교 처리를 모듈로 받아서 처리하면 ui에서 시그널에 위임한 것 처럼 간소화 됨
+ * 섹션 정보 핸들링
  */
 export const mainSection_Adapter = () => {
 	dataOn('DATA_section', async (section) => {
@@ -57,6 +69,9 @@ export const mainSection_Adapter = () => {
 	})
 }
 
+/**
+ * 섹션 리스트 정보 핸들링
+ */
 export const mainSectionList_Adapter = () => {
 	dataOnList('DATA_sectionList', async (sectionList) => {
 		// 삭제하고 싶으면 key : '' 로 처리
@@ -71,7 +86,25 @@ export const mainSectionList_Adapter = () => {
 		signalReceiving('sectionList', key)(sectionList)
 	})
 }
-//
+
+// 일방적으로 전송하는 형태
+export const selectMainCurrentSection_Adapter = () => {
+	const node = getCurrentSelection()
+	if (node) {
+		const section = getCurrentSectionModel(node)
+		if (section) {
+			dataEmitCurrentSection('DATA_currentSection', section)
+		}
+	}
+}
+
+export const pageMainCurrentSection_Adapter = () => {
+	const page = figma.currentPage
+	const section = getCurrentSectionModel(page)
+	if (section) {
+		dataEmitCurrentSection('DATA_currentSection', section)
+	}
+}
 
 /**
  * 섹션 아이디 리스트 조회
@@ -91,3 +124,8 @@ export const SectionListAtom = signal<SectionList>([])
  * 기존 메모를 핫토픽에도 복제해서 보여주는 개념으로 동작
  */
 export const HotTopicListAtom = signal<MEMO_KEY[]>([])
+
+/**
+ * 현재 섹션 정보
+ * */
+export const CurrentSectionAtom = signal<CurrentSectionInfo[]>([])

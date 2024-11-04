@@ -1,11 +1,44 @@
 import { on, once, showUI } from '@create-figma-plugin/utilities'
 import { adapterSampleHandler, CloseHandler, ResizeWindowHandler } from '../adapter/types'
 import { mainUser_Adapter } from '@/domain/user/userAdapter'
-import { mainSectionList_Adapter } from '@/domain/section/sectionAdapter'
+import {
+	mainSectionList_Adapter,
+	pageMainCurrentSection_Adapter,
+	selectMainCurrentSection_Adapter,
+	signalOn,
+	signalOnCurrentSection,
+} from '@/domain/section/sectionAdapter'
+import { FilePathNodeSearch, FilePathSearch, linkPathNodeType } from '@/figmaPluginUtils'
+import { CurrentSectionInfo } from '@/domain/types'
 
 export default function () {
 	mainUser_Adapter()
 	mainSectionList_Adapter()
+	//on 이벤트들은 중첩 됨
+
+	signalOnCurrentSection('SIGNAL_currentSection', (key) => {
+		//임시 처리
+		// SIGNAL_currentSection는 이벤트로 보내다보니... 시그널로 처리할게 딱히 없음
+		console.log('SIGNAL_currentSection', key)
+	})
+	signalOn('SIGNAL_section', (key) => {
+		//임시 처리
+
+		console.log('SIGNAL_section', key)
+	})
+
+	figma.on('selectionchange', function () {
+		selectMainCurrentSection_Adapter()
+	})
+
+	figma.on('currentpagechange', function () {
+		// 페이지 이름 기준 섹션 리스트 조회
+		// 키 조회는 섹션 이름 기준 startWith 로 하위 대상을 섹션 리스트에서 선택해서 조회함
+		pageMainCurrentSection_Adapter()
+	})
+
+	// 페이지에 고유 이름 부여 ( 섹션 키 조회 시 페이지 이름을 대체하기 위함 )
+
 	on<ResizeWindowHandler>('RESIZE_WINDOW', function (windowSize: { width: number; height: number }) {
 		const { width, height } = windowSize
 		figma.ui.resize(width, height)

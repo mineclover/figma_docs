@@ -147,6 +147,7 @@ export const prefix = {
 	user: 'USER_',
 	sectionList: '⟅SECTION_LIST⟆',
 	memoList: '⟅MEMO_LIST⟆',
+	currentSection: '⟅CURRENT_SECTION⟆',
 } as const
 
 /**

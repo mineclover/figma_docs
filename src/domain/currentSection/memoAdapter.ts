@@ -132,16 +132,3 @@ export const selectMemo_Adapter = () => {
  *
  */
 export const MemoListAtom = signal<MEMO_KEY[]>([])
-export const MemosAtom = signal<Memos>({})
-export const MemoAtom = signal<Memo>({
-	writer: '',
-	key: '',
-	url: '',
-	sectionBackLink: [],
-	componentLink: [],
-	cartagory: '',
-	title: '',
-	created: Date.now(),
-	modified: Date.now(),
-	description: '',
-})
