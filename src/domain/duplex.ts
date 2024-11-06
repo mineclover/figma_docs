@@ -1,10 +1,7 @@
-import { DuplexConcatStrings, DataHandler, DuplexDataHandler, SignalHandler, DuplexSignalHandler } from './interface'
-import { FigmaUser, Memo, Section, SectionList } from './types'
-import { on, once, emit, EventHandler, getTotalUseCountAsync } from '@create-figma-plugin/utilities'
-import { UserAtom } from './user/userAdapter'
+import { userAtom } from './user/userModel'
 import { Signal } from '@preact/signals-core'
-import { CurrentSectionAtom, HotTopicListAtom, SectionAtom, SectionListAtom } from './section/sectionAdapter'
-import { MemoAtom, MemoListAtom, MemosAtom } from './memo/memoAdapter'
+import { currentSectionAtom, hotTopicListAtom, sectionAtom, sectionListAtom } from './section/sectionModel'
+import { memoAtom, memoListAtom, memosAtom } from './memo/memoModel'
 
 /** 이 타입이 중앙 관제 타입 v1 */
 // export const duplexKeysV1 = {
@@ -18,14 +15,14 @@ import { MemoAtom, MemoListAtom, MemosAtom } from './memo/memoAdapter'
  * 시그널 데이터를 매핑해서 공수를 줄이고 확장성을 높임
  */
 export const duplexKeysAndSignal = {
-	user: UserAtom,
-	memo: MemoAtom,
-	memos: MemosAtom,
-	memoList: MemoListAtom,
-	section: SectionAtom,
-	sectionList: SectionListAtom,
-	hotTopicList: HotTopicListAtom,
-	currentSection: CurrentSectionAtom,
+	user: userAtom,
+	memo: memoAtom,
+	memos: memosAtom,
+	memoList: memoListAtom,
+	section: sectionAtom,
+	sectionList: sectionListAtom,
+	hotTopicList: hotTopicListAtom,
+	currentSection: currentSectionAtom,
 } as const
 
 /** 이 타입이 중앙 관제 타입 v2 의 키 타입 */
@@ -46,13 +43,13 @@ export interface DuplexType<T extends DuplexKeysType> {
 	data: (typeof duplexKeysAndSignal)[T] extends Signal<infer T> ? T : never
 }
 
-const test2: DuplexType<'user'> = {
-	key: 'user',
-	data: {
-		uuid: '',
-		name: '',
-	},
-}
+// const test2: DuplexType<'user'> = {
+// 	key: 'user',
+// 	data: {
+// 		uuid: '',
+// 		name: '',
+// 	},
+// }
 
 // export interface UserDuplex2 extends DynamicDuplexType {
 // 	key: 'user'

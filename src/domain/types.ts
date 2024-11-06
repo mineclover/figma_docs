@@ -52,3 +52,7 @@ export type CurrentSectionInfo = {
 	type: string
 	alias: string
 }
+
+export type MemoCategory = string
+
+export type MemoCategoryList = MemoCategory[]

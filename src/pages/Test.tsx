@@ -3,7 +3,7 @@ import { effect, batch } from '@preact/signals-core'
 import { useEffect, useState } from 'preact/hooks'
 import { count, multiplier, price, doubleCount, total } from './signals'
 import { h } from 'preact'
-import { UserAtom } from '@/domain/user/userAdapter'
+import { userAtom } from '@/domain/user/userModel'
 
 // 부모 컴포넌트
 export function Parent() {
@@ -14,13 +14,13 @@ export function Parent() {
 		setParentCount(count.value)
 	})
 	effect(() => {
-		console.log(`UserAtom: count changed to ${UserAtom.value}`)
+		console.log(`UserAtom: count changed to ${userAtom.value}`)
 	})
 
 	return (
 		<div className="p-4">
 			<h1>시그널 전파 데모 {parentCount}</h1>
-			{JSON.stringify(UserAtom.value)}
+			{JSON.stringify(userAtom.value)}
 			<User />
 			<Counter />
 			<Multiplier />
@@ -118,17 +118,17 @@ function Results() {
 
 function User() {
 	effect(() => {
-		console.log('UserAtom 값 변경:', UserAtom.value)
+		console.log('UserAtom 값 변경:', userAtom.value)
 	})
 
-	if (!UserAtom.value) {
+	if (!userAtom.value) {
 		return <div>로딩 중...</div>
 	}
 
 	return (
 		<div className="mb-4">
-			<p>유저 이름: {UserAtom.value.name}</p>
-			<p>유저 UUID: {UserAtom.value.uuid}</p>
+			<p>유저 이름: {userAtom.value.name}</p>
+			<p>유저 UUID: {userAtom.value.uuid}</p>
 		</div>
 	)
 }

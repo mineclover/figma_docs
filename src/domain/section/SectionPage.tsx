@@ -1,14 +1,14 @@
 import { h } from 'preact'
 import { useSignal } from '@/hooks/useSignal'
 import { useEffect, useState } from 'preact/hooks'
-import { CurrentSectionAtom, SectionListAtom } from './sectionAdapter'
+import { currentSectionAtom, sectionListAtom } from './sectionModel'
 import { dataEmitList } from './sectionAdapter'
 import { DuplexDataHandler } from '../interface'
 import { CurrentSectionInfo, SectionList } from '../types'
 
 function SectionPage() {
-	const sectionList = useSignal(SectionListAtom)
-	const currentSection = useSignal(CurrentSectionAtom)
+	const sectionList = useSignal(sectionListAtom)
+	const currentSection = useSignal(currentSectionAtom)
 
 	const [newSection, setNewSection] = useState<string>('')
 

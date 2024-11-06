@@ -1,7 +1,7 @@
 import { generateRandomText2 } from '@/utils/textTools'
 import { prefix } from '@/domain/interface'
 import { FigmaUser, Memo, MEMO_KEY, Memos, SectionID, SectionList } from '@/domain/types'
-import { getSectionModel } from '../section/sectionModel'
+import { getSectionModel } from '../section/sectionRepo'
 
 /** 다른 키 없이 빈 메모 */
 type NullMemo = { key: MEMO_KEY }

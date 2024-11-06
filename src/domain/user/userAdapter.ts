@@ -1,10 +1,7 @@
 import { on, once, emit } from '@create-figma-plugin/utilities'
 
-import { signal } from '@preact/signals-core'
-import { FigmaUser } from '../types'
-
 import { createDataHandlers, DuplexDataHandler, DuplexSignalHandler, signalReceiving } from '../interface'
-import { getUserModel, setUserName } from './userModel'
+import { getUserModel, setUserName } from './userRepo'
 
 /** duplex 데이터 전송 핸들러 예시 */
 type DataUserHandler = DuplexDataHandler<'user'>
@@ -45,9 +42,3 @@ export const mainUser_Adapter = () => {
 //
 
 export const sampleDataEmit = emit<DuplexDataHandler<'user'>>
-
-/** signal 이지만 이름이 겹쳐서 아톰으로 함 */
-export const UserAtom = signal<FigmaUser>({
-	uuid: '',
-	name: '',
-})

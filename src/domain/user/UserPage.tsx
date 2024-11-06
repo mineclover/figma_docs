@@ -1,14 +1,14 @@
 import { h } from 'preact'
 // import { useUser } from './userProvider'
 
-import { UserAtom } from './userAdapter'
+import { userAtom } from './userModel'
 import { useSignal } from '@/hooks/useSignal'
 import { useEffect, useState } from 'preact/hooks'
 import { dataEmit, DuplexDataHandler } from '../interface'
 import { emit } from '@create-figma-plugin/utilities'
 
 function UserPage() {
-	const user = useSignal(UserAtom)
+	const user = useSignal(userAtom)
 	const [name, setName] = useState(user.name)
 	const [uuid, setUuid] = useState(user.uuid)
 
