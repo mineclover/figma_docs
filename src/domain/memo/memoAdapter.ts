@@ -71,14 +71,11 @@ export const mainMemo_Adapter = () => {
 		// 이벤트 발생 위치랑 다르다고 판단하고 적용함
 		dataMemosEmit('DATA_memos', memos)
 	})
+	// 전체 메모를 보낼 수 있긴 한데 안쓰는게 좋긴 함
 	signalMemosOn('SIGNAL_memos', async (key) => {
-		// 이건 인터페이스를 바꿔야할거같은데
 		// 아니면 그냥 일회용 프로토콜이면서 동시에 고유식별 인걸로해서 역할을 두개 부여...
 		// 어짜피 메모 리스트 호출은 섹션 기반으로 동작
 		// 개별 메모 조회에 대한 액션으로 정의함
-		if (key == null) {
-			return
-		}
 		const memos = getAllMemoListDataModel()
 		signalReceiving('memos', key)(memos)
 

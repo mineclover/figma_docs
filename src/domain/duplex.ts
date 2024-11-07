@@ -2,6 +2,7 @@ import { userAtom } from './user/userModel'
 import { Signal } from '@preact/signals-core'
 import { currentSectionAtom, hotTopicListAtom, sectionAtom, sectionListAtom } from './section/sectionModel'
 import { memoAtom, memoListAtom, memosAtom } from './memo/memoModel'
+import { categoryAtom } from './category/categoryModel'
 
 /** 이 타입이 중앙 관제 타입 v1 */
 // export const duplexKeysV1 = {
@@ -23,6 +24,7 @@ export const duplexKeysAndSignal = {
 	sectionList: sectionListAtom,
 	hotTopicList: hotTopicListAtom,
 	currentSection: currentSectionAtom,
+	category: categoryAtom,
 } as const
 
 /** 이 타입이 중앙 관제 타입 v2 의 키 타입 */

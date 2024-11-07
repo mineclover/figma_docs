@@ -10,10 +10,12 @@ import {
 } from '@/domain/section/sectionAdapter'
 import { FilePathNodeSearch, FilePathSearch, linkPathNodeType } from '@/figmaPluginUtils'
 import { CurrentSectionInfo } from '@/domain/types'
+import { mainCategory_Adapter } from '@/domain/category/categoryAdapter'
 
 export default function () {
 	mainUser_Adapter()
 	mainSectionList_Adapter()
+	mainCategory_Adapter()
 	//on 이벤트들은 중첩 됨
 
 	signalOnCurrentSection('SIGNAL_currentSection', (key) => {

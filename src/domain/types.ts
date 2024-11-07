@@ -55,4 +55,7 @@ export type CurrentSectionInfo = {
 
 export type MemoCategory = string
 
-export type MemoCategoryList = MemoCategory[]
+/**
+ * key를 카테고리로 value를 설명으로 구성하는게 더 좋을 것 같음
+ */
+export type MemoCategoryList = Record<MemoCategory, string>

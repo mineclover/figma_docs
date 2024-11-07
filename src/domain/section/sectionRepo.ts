@@ -19,6 +19,10 @@ export const getSectionModel = (key: SectionID) => {
 }
 
 // TODO: 검색 필터 로직은 나중에
+/**
+ * 섹션 리스트 저장
+ * @returns 저장 값 반환 ( 로직에서 데이터가 흐르게 구성해봤음 )
+ */
 export const setSectionListModel = (input: SectionList) => {
 	figma.root.setPluginData(prefix.sectionList, JSON.stringify(input))
 	return input

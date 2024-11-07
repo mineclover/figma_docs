@@ -148,6 +148,7 @@ export const prefix = {
 	sectionList: '⟅SECTION_LIST⟆',
 	memoList: '⟅MEMO_LIST⟆',
 	currentSection: '⟅CURRENT_SECTION⟆',
+	category: '⟅CATEGORY⟆',
 } as const
 
 /**

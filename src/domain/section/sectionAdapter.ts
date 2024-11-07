@@ -86,7 +86,7 @@ export const mainSectionList_Adapter = () => {
 	})
 }
 
-// 일방적으로 전송하는 형태
+/** 선택 노드 기준 섹션 조회 */
 export const selectMainCurrentSection_Adapter = () => {
 	const node = getCurrentSelection()
 	if (node) {
@@ -97,6 +97,7 @@ export const selectMainCurrentSection_Adapter = () => {
 	}
 }
 
+/** 페이지 이름 기준 섹션 조회 */
 export const pageMainCurrentSection_Adapter = () => {
 	const page = figma.currentPage
 	const section = getCurrentSectionModel(page)
