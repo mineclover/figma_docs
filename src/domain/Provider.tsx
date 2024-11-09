@@ -2,6 +2,7 @@ import { ComponentChildren, Fragment, h } from 'preact'
 import { duplexKeysAndSignal, DuplexKeysType } from './duplex'
 import { useLayoutEffect } from 'preact/hooks'
 import { duplexConcatWithType2, dataOn, signalEmit } from './interface'
+import ClientModalProvider from '@/components/modal/Modal'
 
 /**
  * 이펙트에 데이터 등록 간소화
@@ -52,5 +53,10 @@ export const Duplex_Adapter = ({ children }: { children: ComponentChildren }) =>
  */
 export function AppProvider({ children }: { children: preact.ComponentChildren }) {
 	// 사용자 상태
-	return <Duplex_Adapter>{children}</Duplex_Adapter>
+	return (
+		<Duplex_Adapter>
+			{children}
+			<ClientModalProvider></ClientModalProvider>
+		</Duplex_Adapter>
+	)
 }

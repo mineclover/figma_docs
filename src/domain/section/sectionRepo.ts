@@ -2,6 +2,7 @@ import { generateRandomText2 } from '@/utils/textTools'
 import { prefix } from '@/domain/interface'
 import { CurrentSectionInfo, FigmaUser, MEMO_KEY, Section, SectionID, SectionList } from '@/domain/types'
 import { getMemoModel, memoCheck, setMemoModel } from '../memo/memoRepo'
+// FilePathNodeSearch 모듈 경로 수정
 import { FilePathNodeSearch } from '@/figmaPluginUtils'
 
 /** 데이터 수정을 덮어씌우는 것보다 지정 키를 없애는 것이 좋음 */

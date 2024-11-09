@@ -5,6 +5,7 @@ import { useEffect, useState } from 'preact/hooks'
 import { DuplexDataHandler, prefix } from '../interface'
 import { CurrentSectionInfo, SectionList } from '../types'
 import { categoryAtom, hotTopic } from './categoryModel'
+import { addLayer } from '@/components/modal/Modal'
 
 // 이름 추천 받아요
 
@@ -44,6 +45,13 @@ function CategoryPage() {
 			<main>
 				<div>{menus[selectedCategory as keyof typeof menus]}</div>
 			</main>
+			<button
+				onClick={() => {
+					addLayer('hello', <div>test</div>)
+				}}
+			>
+				asdf
+			</button>
 		</div>
 	)
 }
