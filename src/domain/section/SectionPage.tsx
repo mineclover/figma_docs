@@ -5,26 +5,32 @@ import { currentSectionAtom, sectionListAtom } from './sectionModel'
 import { dataEmitList } from './sectionAdapter'
 import { DuplexDataHandler } from '../interface'
 import { CurrentSectionInfo, SectionList } from '../types'
+import { modalAlert } from '@/components/alert'
 
 function SectionPage() {
 	const sectionList = useSignal(sectionListAtom)
 	const currentSection = useSignal(currentSectionAtom)
+	console.log('sectionList:', sectionList)
 
 	const [newSection, setNewSection] = useState<string>('')
 
 	const handleSectionUpdate = () => {
-		dataEmitList('DATA_sectionList', [...sectionList, newSection.trim()])
+		const newName = newSection.trim()
+
+		// 중복 체크 추가
+		if (newName === '' || sectionList.includes(newName)) {
+			console.log('이미 존재하는 섹션 명')
+			modalAlert('이미 존재하는 섹션 명')
+			return
+		}
+		console.log(newName, 'newName', newName, '<')
+
+		dataEmitList('DATA_sectionList', [...sectionList, newName])
+		setNewSection('')
 	}
 
 	const handleCurrentSectionUpdate = (input: SectionList) => {
 		dataEmitList('DATA_sectionList', input)
-	}
-
-	const handleAddSection = () => {
-		if (newSection.trim()) {
-			handleSectionUpdate()
-			setNewSection('')
-		}
 	}
 
 	return (
@@ -41,9 +47,9 @@ function SectionPage() {
 					onChange={(e) => setNewSection(e.currentTarget.value)}
 					placeholder="새 섹션 이름 입력"
 				/>
-				<button onClick={handleAddSection}>추가</button>
+				<button onClick={handleSectionUpdate}>추가</button>
 			</div>
-			<button onClick={handleSectionUpdate}>저장</button>
+
 			<div>
 				{sectionList.map((sectionId, index) => (
 					<div key={sectionId}>

@@ -6,6 +6,7 @@ import { DuplexDataHandler, prefix } from '../interface'
 import { CurrentSectionInfo, SectionList } from '../types'
 import { categoryAtom, hotTopic } from './categoryModel'
 import { addLayer } from '@/components/modal/Modal'
+import SectionPage from '../section/SectionPage'
 
 // 이름 추천 받아요
 
@@ -52,6 +53,7 @@ function CategoryPage() {
 			>
 				asdf
 			</button>
+			<SectionPage></SectionPage>
 		</div>
 	)
 }

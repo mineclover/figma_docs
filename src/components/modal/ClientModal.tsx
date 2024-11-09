@@ -15,6 +15,7 @@ export interface ClientModalProps extends DivType {
 	escapeActive?: boolean
 	/** 닫힐 때 실행할 함수 넣고 싶으면 */
 	onCloseTrigger?: () => void
+	close: boolean
 	/**
 	 * 모달 활성화 시 스크롤 안되게 막을지 여부
 	 * 보류
@@ -26,6 +27,7 @@ const ClientModal = ({
 	children,
 	outsideDismiss = true,
 	className,
+	close,
 	onCloseTrigger,
 	escapeActive = false,
 	modalKey,
@@ -33,6 +35,7 @@ const ClientModal = ({
 	...props
 }: ClientModalProps) => {
 	const [closing, setClosing] = useState(false)
+	console.log('close:::', close)
 
 	useEffect(() => {
 		const handleKeyPress = (event: KeyboardEvent) => {
