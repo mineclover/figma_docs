@@ -13,8 +13,17 @@ type FunctionAtomProps = {
 	deleteLayer: Function
 }
 
+// 실제 데이터와 데이터 핸들링하는 sort 분리
+// 데이터 삭제 객체 분리
+// 데이터 삭제 객체 내에서 이벤트 핸들러 객체 싱글톤으로 구성
+// 이벤트 전파 최소화 목적의 모듈화
+
+/** 이 시간은 애니메이션 시간 두배로 */
+export const closeMs = 300
+
 const layerAtom = signal<Record<string, JSXModal>>({})
 const sortAtom = signal<string[]>([])
+const deleteAtom = signal<Record<string, NodeJS.Timeout>>({})
 const setSort = (fn: (state: string[]) => string[]) => (sortAtom.value = fn(sortAtom.value))
 
 const setLayer = (fn: (state: Record<string, JSXModal>) => Record<string, JSXModal>) =>
@@ -22,11 +31,29 @@ const setLayer = (fn: (state: Record<string, JSXModal>) => Record<string, JSXMod
 
 export const modalFunctionAtom = signal<FunctionAtomProps>({
 	deleteLayer: (key: string) => {
-		setSort((state) => state.filter((element) => element !== key))
+		const target = deleteAtom.value[key]
+		if (target) {
+			clearTimeout(target)
+		}
+		// setSort((state) => state.filter((element) => element !== key))
+		const timmer = setTimeout(() => {
+			delete deleteAtom.value[key]
+			setSort((state) => state.filter((element) => element !== key))
+		}, closeMs)
+
+		deleteAtom.value = {
+			...deleteAtom.value,
+			[key]: timmer,
+		}
 	},
-	addLayer: (key: string, jsx: h.JSX.Element, props?: Omit<ClientModalProps, 'modalKey'>) => {
+	addLayer: (key: string, jsx: h.JSX.Element, options?: Omit<ClientModalProps, 'modalKey'>) => {
+		const target = deleteAtom.value[key]
+		if (target) {
+			clearTimeout(target)
+		}
+
 		const Temp = (props: CloseProps) => (
-			<ClientModal key={key} {...props} close={props.close} modalKey={key}>
+			<ClientModal key={key} {...options} close={props.close} modalKey={key}>
 				{jsx}
 			</ClientModal>
 		)
@@ -44,7 +71,7 @@ export const { addLayer, deleteLayer } = modalFunctionAtom.value
 const ClientModalProvider = () => {
 	const layer = useSignal(layerAtom)
 	const sort = useSignal(sortAtom)
-	const removeList = useRef<string[]>([])
+	const deleteList = useSignal(deleteAtom)
 
 	// const setFunction = useSetAtom(modalFunctionAtom)
 
@@ -58,37 +85,24 @@ const ClientModalProvider = () => {
 		layerKey.forEach((name) => {
 			if (sort.includes(name)) return
 
-			removeList.current = [...removeList.current, name]
-
 			delete temp[name]
 		})
 
-		setTimeout(() => {
-			// 없애는 정보 어떻게 전달할지..
-			setLayer((state) => ({ ...state, ...temp }))
-			// 리스트는 파악해서 값 넣는 구조니까
-		}, 500)
+		setLayer((state) => ({ ...state, ...temp }))
 	}, [sort])
-
-	useEffect(() => {
-		setTimeout(() => {
-			removeList.current = []
-			// 리스트는 파악해서 값 넣는 구조니까
-		}, 500)
-	}, [layer])
 
 	// const target = document.getElementById('crew-root') ? document.getElementById('crew-root') : document.body!
 	// 삭제 구현 ...
 
-	const t = false
 	return (
 		<div>
 			{sort.map((name) => {
 				const Tag = layer[name]
-				const close = removeList.current.includes(name)
-				console.log(removeList.current, close)
+				const keys = Object.keys(deleteList)
+				const close = keys.includes(name)
 
-				return <Tag close={close}></Tag>
+				/** 이렇게 데이터를 주는 이유는 리렌더링 최소화 */
+				return <Tag key={name} close={close}></Tag>
 			})}
 		</div>
 	)

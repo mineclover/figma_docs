@@ -1,6 +1,6 @@
 import { h } from 'preact'
-import { useEffect, useState } from 'preact/hooks'
-import { Axis, rectToStyle, rectToStyleOffset, BaseProps, clc } from './utils'
+import { useEffect } from 'preact/hooks'
+import { BaseProps, clc } from './utils'
 import styles from './modal.module.css'
 import { deleteLayer } from './Modal'
 
@@ -34,28 +34,21 @@ const ClientModal = ({
 
 	...props
 }: ClientModalProps) => {
-	const [closing, setClosing] = useState(false)
-	console.log('close:::', close)
-
 	useEffect(() => {
 		const handleKeyPress = (event: KeyboardEvent) => {
 			if (escapeActive && event.code === 'Escape') {
-				setClosing(true)
 				deleteLayer(modalKey)
 			}
 		}
 		window.addEventListener('keydown', handleKeyPress)
 
 		return () => {
-			setClosing(false)
-
 			window.removeEventListener('keydown', handleKeyPress)
 		}
 	}, [])
 
 	function onDismiss() {
 		if (outsideDismiss) {
-			setClosing(true)
 			deleteLayer(modalKey)
 		}
 	}
@@ -63,7 +56,7 @@ const ClientModal = ({
 	return (
 		<div
 			{...props}
-			className={clc(styles.modal_backdrop, className as string, closing && styles.close)}
+			className={clc(styles.modal_backdrop, className as string, close && styles.close)}
 			onClick={(e) => {
 				if (e.currentTarget === e.target) {
 					onDismiss()
