@@ -1,0 +1,51 @@
+.tabs {
+	display: flex;
+	flex-direction: row;
+	justify-content: stretch;
+	flex-wrap: wrap;
+	gap: 4px;
+}
+
+.tab,
+.setting,
+.fix {
+	flex-grow: 2;
+	padding: 2px 4px;
+}
+
+.setting {
+	flex-grow: 1;
+}
+.tab {
+	border-bottom: 2px solid var(--figma-color-bg-brand);
+
+	&.active {
+		background-color: var(--figma-color-bg-brand-secondary);
+	}
+	&:hover {
+		background-color: var(--figma-color-bg-brand-hover);
+	}
+}
+/* .tab.active {
+	background-color: var(--figma-color-bg-brand-secondary);
+} */
+
+.setting {
+	border-bottom: 2px solid var(--figma-color-bg-component);
+	&.active {
+		background-color: var(--figma-color-bg-component-secondary);
+	}
+	&:hover {
+		background-color: var(--figma-color-bg-component-hover);
+	}
+}
+
+.fix {
+	border-bottom: 2px solid var(--figma-color-bg-danger);
+	&.active {
+		background-color: var(--figma-color-bg-danger-secondary);
+	}
+	&:hover {
+		background-color: var(--figma-color-bg-danger-hover);
+	}
+}

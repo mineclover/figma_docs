@@ -8,6 +8,10 @@ import { categoryAtom, hotTopic } from './categoryModel'
 import { addLayer } from '@/components/modal/Modal'
 import SectionPage from '../section/SectionPage'
 
+import styles from './category.module.css'
+import { clc } from '@/components/modal/utils'
+import SearchIcon from '@/icon/SearchIcon'
+
 // 이름 추천 받아요
 
 // 카테고리 페이지가 거의 루트 페이지라고 할 수 있음
@@ -16,9 +20,10 @@ function CategoryPage() {
 	const category = useSignal(categoryAtom)
 	const [selectedCategory, setSelectedCategory] = useState<string>('fix')
 	const menus = {
-		fix: hotTopic.fix,
+		// fix: hotTopic.fix,
 		...category,
-		setting: hotTopic.setting,
+		...hotTopic,
+		// setting: hotTopic.setting,
 	}
 	// 섹션 정보 얻고
 	// 얻은 카테고리에 따라 메모 필터링해서 각 카테고리에 전달
@@ -30,17 +35,48 @@ function CategoryPage() {
 	return (
 		<div>
 			<header>
-				<button>검색</button>
+				<button>
+					<SearchIcon></SearchIcon>
+				</button>
 				<div>project name</div>
 				<div>카테고리 추가 버튼</div>
 			</header>
-			<aside>
-				{Object.entries(menus).map(([key, value]) => (
-					<button key={key} onClick={() => handleCategoryClick(key)}>
-						{key}
-					</button>
+			<aside className={styles.tabs}>
+				{Object.entries(menus).map(([key, value]) => {
+					const active = selectedCategory === key
+					if (key === 'fix')
+						return (
+							<button
+								className={clc(styles.fix, active && styles.active)}
+								key={key}
+								onClick={() => handleCategoryClick(key)}
+							>
+								{key}
+							</button>
+						)
+
+					if (key === 'setting')
+						return (
+							<button
+								className={clc(styles.setting, active && styles.active)}
+								key={key}
+								onClick={() => handleCategoryClick(key)}
+							>
+								{key}
+							</button>
+						)
+
+					return (
+						<button
+							className={clc(styles.tab, active && styles.active)}
+							key={key}
+							onClick={() => handleCategoryClick(key)}
+						>
+							{key}
+						</button>
+					)
 					// 설명 추가할 자리가 애매하다
-				))}
+				})}
 			</aside>
 
 			<main>
@@ -50,9 +86,7 @@ function CategoryPage() {
 				onClick={() => {
 					addLayer('hello', <div>test</div>)
 				}}
-			>
-				asdf
-			</button>
+			></button>
 			<SectionPage></SectionPage>
 		</div>
 	)
