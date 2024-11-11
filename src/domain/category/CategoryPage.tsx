@@ -11,6 +11,9 @@ import SectionPage from '../section/SectionPage'
 import styles from './category.module.css'
 import { clc } from '@/components/modal/utils'
 import SearchIcon from '@/icon/SearchIcon'
+import PlusIcon from '@/icon/PlusIcon'
+import CategoryModal, { AddKey, RemoveKey } from './CategoryModal'
+import SettingIcon from '@/icon/SettingIcon'
 
 // 이름 추천 받아요
 
@@ -18,6 +21,7 @@ import SearchIcon from '@/icon/SearchIcon'
 
 function CategoryPage() {
 	const category = useSignal(categoryAtom)
+
 	const [selectedCategory, setSelectedCategory] = useState<string>('fix')
 	const menus = {
 		// fix: hotTopic.fix,
@@ -52,17 +56,45 @@ function CategoryPage() {
 								onClick={() => handleCategoryClick(key)}
 							>
 								{key}
+								<div className={clc(styles.badge, styles.pinned)}>123</div>
 							</button>
 						)
+
+					// if (key === 'setting')
+					// 	return (
+					// 		<button
+					// 			className={clc(styles.setting, active && styles.active)}
+					// 			key={key}
+					// 			onClick={() => handleCategoryClick(key)}
+					// 		>
+					// 			<SettingIcon />
+					// 		</button>
+					// 	)
 
 					if (key === 'setting')
 						return (
 							<button
-								className={clc(styles.setting, active && styles.active)}
+								className={styles.menu}
 								key={key}
-								onClick={() => handleCategoryClick(key)}
+								onClick={() => {
+									handleCategoryClick(key)
+									// addLayer(AddKey, <CategoryModal.AddModal />)
+								}}
 							>
-								{key}
+								<SettingIcon />
+							</button>
+						)
+
+					if (key === 'add')
+						return (
+							<button
+								className={styles.menu}
+								key={key}
+								onClick={() => {
+									addLayer(AddKey, <CategoryModal.AddModal />)
+								}}
+							>
+								<PlusIcon />
 							</button>
 						)
 
@@ -70,8 +102,15 @@ function CategoryPage() {
 						<button
 							className={clc(styles.tab, active && styles.active)}
 							key={key}
-							onClick={() => handleCategoryClick(key)}
+							onClick={() => {
+								handleCategoryClick(key)
+							}}
+							onContextMenu={(e) => {
+								console.log(e)
+								addLayer(RemoveKey, <CategoryModal.RemoveModal target={key} />)
+							}}
 						>
+							<div className={clc(styles.badge, styles.normal)}>123</div>
 							{key}
 						</button>
 					)
@@ -81,6 +120,7 @@ function CategoryPage() {
 
 			<main>
 				<div>{menus[selectedCategory as keyof typeof menus]}</div>
+				{selectedCategory === 'setting' && <CategoryModal.AddModal />}
 			</main>
 			<button
 				onClick={() => {
