@@ -6,6 +6,11 @@
 - [ ] 핫토픽 탭
 - [ ] 데이터 부분 업데이트를 위한 설계가 잘 적용됬는지 검증
 
+# 2024-11-12
+
+- alias 수정 기능 추가
+- No theme provider exists currently, returning defaults, but switching modes is disabled alert을 없앤 플러그인이 없다는 것을 확인
+
 # 2024-11-11
 
 - [x] 카테고리 추가 기능 UI

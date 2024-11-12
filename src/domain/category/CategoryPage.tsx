@@ -14,6 +14,7 @@ import SearchIcon from '@/icon/SearchIcon'
 import PlusIcon from '@/icon/PlusIcon'
 import CategoryModal, { AddKey, RemoveKey } from './CategoryModal'
 import SettingIcon from '@/icon/SettingIcon'
+import Setting from '@/components/page/Setting'
 
 // 이름 추천 받아요
 
@@ -120,14 +121,13 @@ function CategoryPage() {
 
 			<main>
 				<div>{menus[selectedCategory as keyof typeof menus]}</div>
-				{selectedCategory === 'setting' && <CategoryModal.AddModal />}
+				{selectedCategory === 'setting' && <Setting />}
 			</main>
 			<button
 				onClick={() => {
 					addLayer('hello', <div>test</div>)
 				}}
 			></button>
-			<SectionPage></SectionPage>
 		</div>
 	)
 }

@@ -35,11 +35,8 @@ export interface DuplexDataHandler<T extends DuplexKeysType> extends EventHandle
 	name: DuplexConcatStrings<'DATA_', T>
 	handler: (args: DynamicDuplexType<T>['data']) => void
 }
-
-export type DataUserHandler = DuplexDataHandler<'user'>
-on<DataUserHandler>('DATA_user', (user) => {
-	console.log(user)
-})
+// 예시
+// export type DataUserHandler = DuplexDataHandler<'user'>
 
 /**
  * Duplex 호환
@@ -149,6 +146,7 @@ export const prefix = {
 	memoList: '⟅MEMO_LIST⟆',
 	currentSection: '⟅CURRENT_SECTION⟆',
 	category: '⟅CATEGORY⟆',
+	alias: '⟅ALIAS⟆',
 } as const
 
 /**

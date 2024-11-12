@@ -4,8 +4,9 @@ import { mainUser_Adapter } from '@/domain/user/userAdapter'
 import {
 	mainSectionList_Adapter,
 	pageMainCurrentSection_Adapter,
+	selectMainCurrentSection,
 	selectMainCurrentSection_Adapter,
-	signalOn,
+	signalOnSection,
 	signalOnCurrentSection,
 } from '@/domain/section/sectionAdapter'
 import { FilePathNodeSearch, FilePathSearch, linkPathNodeType } from '@/figmaPluginUtils'
@@ -16,6 +17,7 @@ export default function () {
 	mainUser_Adapter()
 	mainSectionList_Adapter()
 	mainCategory_Adapter()
+	selectMainCurrentSection_Adapter()
 	//on 이벤트들은 중첩 됨
 
 	signalOnCurrentSection('SIGNAL_currentSection', (key) => {
@@ -23,14 +25,16 @@ export default function () {
 		// SIGNAL_currentSection는 이벤트로 보내다보니... 시그널로 처리할게 딱히 없음
 		console.log('SIGNAL_currentSection', key)
 	})
-	signalOn('SIGNAL_section', (key) => {
+
+	signalOnSection('SIGNAL_section', (key) => {
+		// 받는 값 없어서
 		//임시 처리
 
 		console.log('SIGNAL_section', key)
 	})
 
 	figma.on('selectionchange', function () {
-		selectMainCurrentSection_Adapter()
+		selectMainCurrentSection()
 	})
 
 	figma.on('currentpagechange', function () {

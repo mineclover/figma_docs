@@ -2,7 +2,7 @@ import { on, once, emit } from '@create-figma-plugin/utilities'
 
 import { FigmaUser } from '../types'
 
-import { createDataHandlers, DuplexDataHandler, DuplexSignalHandler, signalReceiving } from '../interface'
+import { createDataHandlers, dataOn, DuplexDataHandler, DuplexSignalHandler, signalReceiving } from '../interface'
 import {
 	getAllSectionDataModel,
 	clearAllSectionListModel,
@@ -11,6 +11,7 @@ import {
 	getSectionListModel,
 	getCurrentSelection,
 	getCurrentSectionModel,
+	setCurrentSectionModel,
 } from './sectionRepo'
 
 /** duplex 데이터 전송 핸들러 예시 */
@@ -18,7 +19,14 @@ type DataSectionHandler = DuplexDataHandler<'section'>
 /** duplex 신호 전송 핸들러 예시 */
 type SignalSectionHandler = DuplexSignalHandler<'section'>
 
-export const { dataOn, dataOnce, dataEmit, signalOn, signalOnce, signalEmit } = createDataHandlers<'section'>()
+export const {
+	dataOn: dataOnSection,
+	dataOnce: dataOnceSection,
+	dataEmit: dataEmitSection,
+	signalOn: signalOnSection,
+	signalOnce: signalOnceSection,
+	signalEmit: signalEmitSection,
+} = createDataHandlers<'section'>()
 export const {
 	dataOn: dataOnList,
 	dataOnce: dataOnceList,
@@ -49,16 +57,16 @@ export const {
  * 섹션 정보 핸들링
  */
 export const mainSection_Adapter = () => {
-	dataOn('DATA_section', async (section) => {
+	dataOnSection('DATA_section', async (section) => {
 		const sectionItems = Object.entries(section)
 		for (const [key, value] of sectionItems) {
 			setSectionModel(key, value)
 		}
 		// 변경 사항 전송
 		// TODO: 변경 반영 측면에서 좀 애매함
-		dataEmit('DATA_section', section)
+		dataEmitSection('DATA_section', section)
 	})
-	signalOn('SIGNAL_section', async (key) => {
+	signalOnSection('SIGNAL_section', async (key) => {
 		/** 모델 코드임 */
 		// const user = await getUserModel()
 		// 전체 섹션 전송하는 게 컨벤션 고로 전부 보냄
@@ -86,8 +94,20 @@ export const mainSectionList_Adapter = () => {
 	})
 }
 
-/** 선택 노드 기준 섹션 조회 */
 export const selectMainCurrentSection_Adapter = () => {
+	dataOnCurrentSection('DATA_currentSection', async (currentSection) => {
+		// 찾아서 수정함 , 만약 pageId 가 필요하면 수정해야함
+		await setCurrentSectionModel(currentSection)
+		selectMainCurrentSection()
+	})
+
+	signalOnCurrentSection('SIGNAL_currentSection', async () => {
+		selectMainCurrentSection()
+	})
+}
+
+/** 선택 노드 기준 섹션 조회 */
+export const selectMainCurrentSection = () => {
 	const node = getCurrentSelection()
 	if (node) {
 		const section = getCurrentSectionModel(node)

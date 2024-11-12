@@ -56,16 +56,12 @@
 
 .modal {
 	display: grid;
-	grid-template-columns: 1fr 1fr 1fr;
-	grid-template-areas:
-		'header header header'
-		'main main side'
-		'description description side';
+
 	row-gap: 4px;
 	column-gap: 8px;
 
 	padding: 8px;
-
+	margin-inline: 8px;
 	background-color: var(--figma-color-bg);
 	border-radius: 8px;
 
@@ -90,17 +86,40 @@
 
 	.delete {
 		grid-area: side;
-		padding: 2px 4px;
+		padding: 1px 4px;
 		border-radius: 4px;
-
+		white-space: nowrap;
 		background-color: var(--figma-color-bg-danger);
+		font-weight: 700;
+	}
+	.sub {
+		color: var(--figma-color-text-secondary);
+	}
+	.text {
+		font-weight: 400;
 	}
 	.submit {
 		grid-area: side;
 		border-radius: 4px;
 		aspect-ratio: 1;
+		font-weight: 700;
 		background-color: var(--figma-color-bg-brand);
 	}
+}
+
+.add {
+	grid-template-columns: 2fr 1fr 1fr;
+	grid-template-areas:
+		'header header header'
+		'main main side'
+		'description description side';
+}
+
+.remove {
+	grid-template-columns: 3fr 1fr;
+	grid-template-areas:
+		'header header'
+		'main side';
 }
 
 .badge {

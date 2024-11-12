@@ -6,6 +6,8 @@ import { dataCategoryEmit } from './categoryAdapter'
 import { MemoCategoryList } from '../types'
 import { categoryAtom } from './categoryModel'
 import { useSignal } from '@/hooks/useSignal'
+import { clc } from '@/components/modal/utils'
+import { deleteLayer } from '@/components/modal/Modal'
 
 function AddModal() {
 	const category = useSignal<MemoCategoryList>(categoryAtom)
@@ -15,7 +17,7 @@ function AddModal() {
 
 	return (
 		<form
-			className={styles.modal}
+			className={clc(styles.modal, styles.add)}
 			onSubmit={(e) => {
 				e.preventDefault()
 				console.log(e, inputCategory, description)
@@ -54,17 +56,21 @@ function RemoveModal({ target }: { target: string }) {
 
 	return (
 		<form
-			className={styles.modal}
+			className={clc(styles.modal, styles.remove)}
 			onSubmit={(e) => {
 				e.preventDefault()
 
 				const newCategory = { ...category }
 				delete newCategory[target]
 				dataCategoryEmit('DATA_category', newCategory)
+				deleteLayer(RemoveKey)
 			}}
 		>
 			<span className={styles.header}>카테고리 삭제</span>
-			<span className={styles.main}>{target}</span>
+			<div className={styles.main}>
+				<span className={styles.sub}>카테고리 명: </span>
+				<span className={styles.text}>{target}</span>
+			</div>
 			<button className={styles.delete}>삭제 확인</button>
 		</form>
 	)

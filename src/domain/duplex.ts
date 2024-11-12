@@ -27,6 +27,9 @@ export const duplexKeysAndSignal = {
 	category: categoryAtom,
 } as const
 
+// duplexKeysAndSignal 는 아톰이 있는 구조에서 추론하는 거라 ..
+// ui에서 가공된 데이터는 어떻게 처리할지..
+
 /** 이 타입이 중앙 관제 타입 v2 의 키 타입 */
 export type DuplexKeysType = keyof typeof duplexKeysAndSignal
 

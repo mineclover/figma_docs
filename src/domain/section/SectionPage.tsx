@@ -1,14 +1,77 @@
-import { h } from 'preact'
+import { Fragment, h } from 'preact'
 import { useSignal } from '@/hooks/useSignal'
 import { useState } from 'preact/hooks'
 import { currentSectionAtom, sectionListAtom } from './sectionModel'
-import { dataEmitList } from './sectionAdapter'
-import { SectionList } from '../types'
+import { dataEmitCurrentSection, dataEmitList } from './sectionAdapter'
+import { CurrentSectionInfo, SectionList } from '../types'
 import { modalAlert } from '@/components/alert'
+import styles from './section.module.css'
+import { addLayer } from '@/components/modal/Modal'
 
-function SectionPage() {
+// 섹션 추가 삭제는 메모 추가 삭제에 의해 자연스럽게 발생하는 동작임
+type Props = {
+	pageId: string
+}
+
+const SectionItem = ({ pageId, id, name, type, alias }: CurrentSectionInfo & Props) => {
+	const [aliasInput, setAliasInput] = useState<string>(alias)
+
+	const handleAliasUpdate = () => {
+		console.log(pageId, id, alias)
+		// type, name 말고 안보내도 되는데..
+		dataEmitCurrentSection('DATA_currentSection', [{ id, name, type, alias: aliasInput }])
+		addLayer('test', <div>성공</div>)
+	}
+
+	const handlePageMove = () => {
+		console.log('이동', pageId, id, alias)
+		addLayer('test', <div>성공</div>)
+	}
+
+	return (
+		<div className={styles.sectionItem}>
+			<span className={styles.typeArea}>{type}</span>
+			{/* <button className={styles.idArea} onClick={() => handlePageMove()}>
+				화면 이동
+			</button> */}
+			<span className={styles.nameArea}>{name}</span>
+			<div className={styles.aliasArea}>
+				<input
+					type="text"
+					placeholder={alias === '' ? '설정된 별칭이 없음' : alias}
+					value={aliasInput}
+					onChange={(e) => setAliasInput(e.currentTarget.value)}
+				/>
+			</div>
+			<div className={styles.buttonArea}>
+				<button onClick={() => handleAliasUpdate()}>수정</button>
+			</div>
+		</div>
+	)
+}
+
+export const SectionPath = ({ pageId, currentSection }: { currentSection: CurrentSectionInfo[] } & Props) => {
+	return (
+		<div className={styles.currentWrapper}>
+			<span className={styles.title}>현재 섹션</span>
+			{currentSection.map((section, index) => {
+				const context = section.alias === '' ? section.name : section.alias
+				const isLast = index === currentSection.length - 1
+				return (
+					<Fragment key={section.id}>
+						<span className={styles.content}>{context}</span>
+						{!isLast && <span>/</span>}
+					</Fragment>
+				)
+			})}
+		</div>
+	)
+}
+
+const SectionPage = () => {
 	const sectionList = useSignal(sectionListAtom)
 	const currentSection = useSignal(currentSectionAtom)
+	const pageId = currentSection.filter((section) => section.type === 'PAGE')[0]?.id ?? ''
 
 	const [newSection, setNewSection] = useState<string>('')
 
@@ -33,55 +96,13 @@ function SectionPage() {
 	}
 
 	return (
-		<div>
-			<h2>현재 섹션</h2>
-			<div>{currentSection.map((section) => section.name).join('/')}</div>
-			<div>{currentSection.map((section) => section.id).join('/')}</div>
-
-			<h2>섹션 목록</h2>
-			<div>
-				<input
-					type="text"
-					value={newSection}
-					onKeyDown={(e) => {
-						if (e.key === 'Enter') {
-							console.log(sectionList)
-
-							// 지연 발생은 함수 선언 시점 데이터가 과거라 생김
-							// 실행되는 함수 자체가 과거의 거라서 업데이트가 안됨
-							// 그래서 업데이트 방식을 바꿈
-							handleSectionUpdate(e.currentTarget.value)
-						}
-					}}
-					// onChange 의 반응 속도가 느리다
-					onChange={(e) => setNewSection(e.currentTarget.value)}
-					placeholder="새 섹션 이름 입력"
-				/>
-				<button
-					onClick={() => {
-						handleSectionUpdate(newSection)
-					}}
-				>
-					추가
-				</button>
-			</div>
-
-			<div>
-				{sectionList.map((sectionId, index) => (
-					<div key={sectionId}>
-						<div>{sectionId}</div>
-
-						<button
-							onClick={() => {
-								const newSections = sectionList.filter((_, i) => i !== index)
-								handleCurrentSectionUpdate(newSections)
-							}}
-						>
-							삭제
-						</button>
-					</div>
-				))}
-			</div>
+		<div className={styles.wrapper}>
+			<SectionPath pageId={pageId} currentSection={currentSection} />
+			{/* <div>{currentSection.map((section) => section.id).join('/')}</div> */}
+			<hr className={styles.divider} />
+			{currentSection.map((section) => (
+				<SectionItem pageId={pageId} {...section} />
+			))}
 		</div>
 	)
 }

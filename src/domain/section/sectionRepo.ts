@@ -57,7 +57,7 @@ export const getCurrentSectionModel = (node: BaseNode) => {
 				id: node.id,
 				name: node.name,
 				type: node.type,
-				alias: node.getPluginData('alias'),
+				alias: node.getPluginData(prefix.alias),
 			}
 		})
 		return sectionInfo
@@ -67,9 +67,14 @@ export const getCurrentSectionModel = (node: BaseNode) => {
 	return null
 }
 
-export const setCurrentSectionModel = (input: CurrentSectionInfo) => {
-	figma.root.setPluginData(prefix.currentSection, JSON.stringify(input))
-	return input
+export const setCurrentSectionModel = async (input: CurrentSectionInfo[]) => {
+	for (const item of input) {
+		const node = await figma.getNodeByIdAsync(item.id)
+
+		if (node) {
+			node.setPluginData(prefix.alias, item.alias)
+		}
+	}
 }
 
 /**
