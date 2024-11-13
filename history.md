@@ -5,11 +5,21 @@
 
 - [ ] 핫토픽 탭
 - [ ] 데이터 부분 업데이트를 위한 설계가 잘 적용됬는지 검증
+- [ ] 전체 메모 뷰어 기능
+- atom 없이 새로 만들어야하는 타입의 처리 방식
+- useEffct로 생명
+
+# 2024-11-13
+
+- [ ] 메모 작성
+- [ ] 메모 추가를 위한 설계 추가
+- 메모 UI
 
 # 2024-11-12
 
 - alias 수정 기능 추가
-- No theme provider exists currently, returning defaults, but switching modes is disabled alert을 없앤 플러그인이 없다는 것을 확인
+- 피그마를 움직일 때 "No theme provider exists currently, returning defaults, but switching modes is disabled" 이 나오는데..
+  해당 alert을 없앤 플러그인이 없다는 것을 확인
 
 # 2024-11-11
 

@@ -1,5 +1,5 @@
 import { generateRandomText2 } from '@/utils/textTools'
-import { prefix } from '@/domain/interface'
+import { prefix, selectedType } from '@/domain/interface'
 import { CurrentSectionInfo, FigmaUser, MEMO_KEY, Section, SectionID, SectionList } from '@/domain/types'
 import { getMemoModel, memoCheck, setMemoModel } from '../memo/memoRepo'
 // FilePathNodeSearch 모듈 경로 수정
@@ -52,7 +52,15 @@ export const getCurrentPage = () => {
 export const getCurrentSectionModel = (node: BaseNode) => {
 	if (node) {
 		const paths = FilePathNodeSearch(node)
-		const sectionInfo: CurrentSectionInfo[] = paths.map((node) => {
+		const sectionInfo: CurrentSectionInfo[] = paths.map((node, index) => {
+			if (index === 0) {
+				return {
+					id: node.id,
+					name: node.name,
+					type: 'SELECTED',
+					alias: node.getPluginData(prefix.alias),
+				}
+			}
 			return {
 				id: node.id,
 				name: node.name,
@@ -134,4 +142,38 @@ export const setSectionModel = (key: SectionID, input: SectionList | '') => {
 	} else {
 		figma.root.setPluginData(key, JSON.stringify(input))
 	}
+}
+
+export const getPageId = (currentSection: CurrentSectionInfo[]) => {
+	return currentSection.filter((section) => section.type === 'PAGE')[0]?.id ?? ''
+}
+export const getNodeId = (currentSection: CurrentSectionInfo[]) => {
+	return currentSection.filter((section) => section.type === selectedType)[0]?.id ?? ''
+}
+
+export const getSectionKey = (currentSection: CurrentSectionInfo[], option: 'all' | 'page' | 'section' | 'node') => {
+	console.log('getSectionKey', currentSection)
+
+	if (option === 'page') {
+		return getPageId(currentSection)
+	}
+	if (option === 'section') {
+		const sections = currentSection.filter((section) => section.type !== selectedType)
+		return sections
+			.map((section) => {
+				const context = section.alias === '' ? section.name : section.alias
+				return context
+			})
+			.join('/')
+	}
+	if (option === 'node') {
+		return currentSection
+			.map((section) => {
+				const context = section.alias === '' ? section.name : section.alias
+				return context
+			})
+			.join('/')
+	}
+	// all
+	return ''
 }

@@ -7,6 +7,7 @@ import { CurrentSectionInfo, SectionList } from '../types'
 import { modalAlert } from '@/components/alert'
 import styles from './section.module.css'
 import { addLayer } from '@/components/modal/Modal'
+import { clc } from '@/components/modal/utils'
 
 // 섹션 추가 삭제는 메모 추가 삭제에 의해 자연스럽게 발생하는 동작임
 type Props = {
@@ -50,9 +51,13 @@ const SectionItem = ({ pageId, id, name, type, alias }: CurrentSectionInfo & Pro
 	)
 }
 
-export const SectionPath = ({ pageId, currentSection }: { currentSection: CurrentSectionInfo[] } & Props) => {
+export const SectionPath = ({
+	pageId,
+	currentSection,
+	className,
+}: { pageId: string; currentSection: CurrentSectionInfo[]; className?: string } & Props) => {
 	return (
-		<div className={styles.currentWrapper}>
+		<div className={clc(styles.currentWrapper, className)}>
 			<span className={styles.title}>현재 섹션</span>
 			{currentSection.map((section, index) => {
 				const context = section.alias === '' ? section.name : section.alias

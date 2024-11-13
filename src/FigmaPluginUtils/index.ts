@@ -58,6 +58,7 @@ export const FilePathSearch = (node: BaseNode, pathNode: PathNodeInfo[] = []): P
 }
 
 /**
+ * 시작 노드를 저장
  * 현재 노드 포함, 노드 참조 객체 살려서
  * 주소로 쓸 수 있는 대상 조회
  * 도큐먼트는 쓸 일 없으니까 그냥 안씀
@@ -67,6 +68,9 @@ export const FilePathSearch = (node: BaseNode, pathNode: PathNodeInfo[] = []): P
  */
 export const FilePathNodeSearch = (node: BaseNode, pathNode: BaseNode[] = []): BaseNode[] => {
 	if (linkPathNodeType.includes(node.type as (typeof linkPathNodeType)[number])) {
+		pathNode.push(node)
+	} else if (pathNode.length === 0) {
+		// 처음 노드 저장
 		pathNode.push(node)
 	}
 	const parent = node.parent

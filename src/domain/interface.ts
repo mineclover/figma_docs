@@ -142,12 +142,16 @@ export const prefix = {
 	data: 'DATA_',
 	memo: 'MEMO_',
 	user: 'USER_',
+	component: 'COMPONENT_',
 	sectionList: '⟅SECTION_LIST⟆',
 	memoList: '⟅MEMO_LIST⟆',
 	currentSection: '⟅CURRENT_SECTION⟆',
 	category: '⟅CATEGORY⟆',
 	alias: '⟅ALIAS⟆',
 } as const
+
+export const splitSymbol = '⁑'
+export const selectedType = 'SELECTED'
 
 /**
  * 일회용 호출

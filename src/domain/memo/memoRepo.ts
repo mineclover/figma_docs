@@ -1,7 +1,8 @@
 import { generateRandomText2 } from '@/utils/textTools'
-import { prefix } from '@/domain/interface'
+import { prefix, splitSymbol } from '@/domain/interface'
 import { FigmaUser, Memo, MEMO_KEY, Memos, SectionID, SectionList } from '@/domain/types'
 import { getSectionModel } from '../section/sectionRepo'
+import { AddMemoType } from '../utils/featureType'
 
 /** 다른 키 없이 빈 메모 */
 type NullMemo = { key: MEMO_KEY }
@@ -22,7 +23,7 @@ export const getMemoModel = (key: MEMO_KEY) => {
  * @param memo
  * @returns
  */
-export const memoCheck = (memo: Memo | NullMemo | ''): memo is Memo => {
+export const memoCheck = (memo: Memo | NullMemo | AddMemoType | ''): memo is Memo => {
 	if (memo === '') {
 		return false
 	}
@@ -48,13 +49,28 @@ export const memoCheck = (memo: Memo | NullMemo | ''): memo is Memo => {
  * @param memo
  * @returns 삭제된 섹션 리스트 반환
  */
-export const setMemoModel = (key: MEMO_KEY, memo: Memo | NullMemo) => {
+export const setMemoModel = (key: MEMO_KEY, memo: Memo | AddMemoType | NullMemo) => {
 	const currentMemo = getMemoModel(key)
 	const currentSection = currentMemo === '' ? [] : currentMemo.sectionBackLink
+	// 메모..
+
+	// 추가를 위한 키 발급은 클라에서 랜덤 키 얻어서 감싸보내주기
+
+	// 값 없는 것들은 기존에 없으면 생성 있으면 읽어옴
+	// 메인에서 처리되는 건 동일하게 구성
+	// 클라 데이터보다 메인 쪽에서 읽는 데이터가 더 신선함
+	//
+	// uuid 얻어오고
+	// 이미 메모가 있으면 create는 기존 데이터 값 사용
+	// modified는 현재 시간 사용
+	// writer는 현재 유저 사용
+
+	// 나머지 값은 새 값 기준으로 덮어씌움
+	// 작성자 검증 추가
+	// 즉 create 있으면 기존 데이터 사용
 
 	if (memoCheck(memo)) {
 		const removedSections = currentSection.filter((section) => !memo.sectionBackLink.includes(section))
-
 		figma.root.setPluginData(key, JSON.stringify(memo))
 		setMemoListModel([key], 'add')
 		return removedSections
@@ -121,4 +137,17 @@ export const getSectionMemoListDataModel = (key: SectionID) => {
 		return []
 	}
 	return memoList.map((item) => getMemoModel(item)).filter((item) => item !== '')
+}
+
+export const componentKeyBuilder = (pageId: string, nodeId: string) => {
+	// return `${prefix.component}${pageId}${splitSymbol}${nodeId}`
+	return `${pageId}${splitSymbol}${nodeId}`
+}
+
+export const componentKeyParser = (key: string) => {
+	const [pageId, nodeId] = key.split(splitSymbol)
+	if (pageId && nodeId) {
+		return { pageId, nodeId }
+	}
+	return null
 }

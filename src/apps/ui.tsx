@@ -5,7 +5,7 @@ import { emit } from '@create-figma-plugin/utilities'
 import { ResizeWindowHandler } from '../adapter/types'
 
 import { AppProvider } from '@/domain/Provider'
-import CategoryPage from '@/domain/category/CategoryPage'
+import CategoryPage from '@/domain/category/RootPage'
 
 function Plugin() {
 	function onWindowResize(windowSize: { width: number; height: number }) {

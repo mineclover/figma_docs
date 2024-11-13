@@ -9,7 +9,7 @@ import { useSignal } from '@/hooks/useSignal'
 import { clc } from '@/components/modal/utils'
 import { deleteLayer } from '@/components/modal/Modal'
 
-function AddModal() {
+function AddCategoryModal() {
 	const category = useSignal<MemoCategoryList>(categoryAtom)
 
 	const [inputCategory, setCategory] = useState<string>('')
@@ -48,10 +48,10 @@ function AddModal() {
 	)
 }
 
-export const AddKey = 'AddKey'
-export const RemoveKey = 'RemoveKey'
+export const AddCategoryKey = 'AddCategoryKey'
+export const RemoveCategoryKey = 'RemoveCategoryKey'
 
-function RemoveModal({ target }: { target: string }) {
+function RemoveCategoryModal({ target }: { target: string }) {
 	const category = useSignal<MemoCategoryList>(categoryAtom)
 
 	return (
@@ -63,7 +63,7 @@ function RemoveModal({ target }: { target: string }) {
 				const newCategory = { ...category }
 				delete newCategory[target]
 				dataCategoryEmit('DATA_category', newCategory)
-				deleteLayer(RemoveKey)
+				deleteLayer(RemoveCategoryKey)
 			}}
 		>
 			<span className={styles.header}>카테고리 삭제</span>
@@ -76,4 +76,4 @@ function RemoveModal({ target }: { target: string }) {
 	)
 }
 
-export default { AddModal, RemoveModal }
+export default { AddModal: AddCategoryModal, RemoveModal: RemoveCategoryModal }

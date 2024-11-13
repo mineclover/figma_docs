@@ -58,6 +58,7 @@ const linkSwitch = (link: string) => {
 	}
 	return 'unknown'
 }
+/** 링크 정보 추출 */
 const linkObject = (type: string, url: string) => {
 	if (type === 'github') {
 		// https://github.com/{org}/{projectName}/blob/{branch}/{...filePath}

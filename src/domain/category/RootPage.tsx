@@ -4,7 +4,7 @@ import { useEffect, useState } from 'preact/hooks'
 
 import { DuplexDataHandler, prefix } from '../interface'
 import { CurrentSectionInfo, SectionList } from '../types'
-import { categoryAtom, hotTopic } from './categoryModel'
+import { categoryAtom, currentCategoryAtom, hotTopic } from './categoryModel'
 import { addLayer } from '@/components/modal/Modal'
 import SectionPage from '../section/SectionPage'
 
@@ -12,9 +12,10 @@ import styles from './category.module.css'
 import { clc } from '@/components/modal/utils'
 import SearchIcon from '@/icon/SearchIcon'
 import PlusIcon from '@/icon/PlusIcon'
-import CategoryModal, { AddKey, RemoveKey } from './CategoryModal'
+import CategoryModal, { AddCategoryKey, RemoveCategoryKey } from './CategoryModal'
 import SettingIcon from '@/icon/SettingIcon'
 import Setting from '@/components/page/Setting'
+import MemoModal from '../memo/MemoModal'
 
 // 이름 추천 받아요
 
@@ -22,8 +23,12 @@ import Setting from '@/components/page/Setting'
 
 function CategoryPage() {
 	const category = useSignal(categoryAtom)
+	const selectedCategory = useSignal(currentCategoryAtom)
 
-	const [selectedCategory, setSelectedCategory] = useState<string>('fix')
+	const setSelectedCategory = (category: string) => {
+		currentCategoryAtom.value = category
+	}
+
 	const menus = {
 		// fix: hotTopic.fix,
 		...category,
@@ -92,7 +97,7 @@ function CategoryPage() {
 								className={styles.menu}
 								key={key}
 								onClick={() => {
-									addLayer(AddKey, <CategoryModal.AddModal />)
+									addLayer(AddCategoryKey, <MemoModal.AddModal />)
 								}}
 							>
 								<PlusIcon />
@@ -108,7 +113,7 @@ function CategoryPage() {
 							}}
 							onContextMenu={(e) => {
 								console.log(e)
-								addLayer(RemoveKey, <CategoryModal.RemoveModal target={key} />)
+								addLayer(RemoveCategoryKey, <CategoryModal.RemoveModal target={key} />)
 							}}
 						>
 							<div className={clc(styles.badge, styles.normal)}>123</div>
