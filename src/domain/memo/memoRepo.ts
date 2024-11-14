@@ -1,8 +1,10 @@
 import { generateRandomText2 } from '@/utils/textTools'
-import { prefix, splitSymbol } from '@/domain/interface'
+import { dataOn, duplexConcatWithType2, prefix, signalEmit, splitSymbol } from '@/domain/interface'
 import { FigmaUser, Memo, MEMO_KEY, Memos, SectionID, SectionList } from '@/domain/types'
 import { getSectionModel } from '../section/sectionRepo'
 import { AddMemoType } from '../utils/featureType'
+import { DuplexKeysType, duplexKeysAndSignal } from '../duplex'
+import { dataMemosOn } from './memoAdapter'
 
 /** 다른 키 없이 빈 메모 */
 type NullMemo = { key: MEMO_KEY }
@@ -51,14 +53,14 @@ export const memoCheck = (memo: Memo | NullMemo | AddMemoType | ''): memo is Mem
  */
 export const setMemoModel = (key: MEMO_KEY, memo: Memo | AddMemoType | NullMemo) => {
 	const currentMemo = getMemoModel(key)
-	const currentSection = currentMemo === '' ? [] : currentMemo.sectionBackLink
+	const currentSection = currentMemo === '' ? [] : (currentMemo.sectionBackLink ?? [])
 	// 메모..
 
 	// 추가를 위한 키 발급은 클라에서 랜덤 키 얻어서 감싸보내주기
-
 	// 값 없는 것들은 기존에 없으면 생성 있으면 읽어옴
 	// 메인에서 처리되는 건 동일하게 구성
 	// 클라 데이터보다 메인 쪽에서 읽는 데이터가 더 신선함
+
 	//
 	// uuid 얻어오고
 	// 이미 메모가 있으면 create는 기존 데이터 값 사용
@@ -69,12 +71,14 @@ export const setMemoModel = (key: MEMO_KEY, memo: Memo | AddMemoType | NullMemo)
 	// 작성자 검증 추가
 	// 즉 create 있으면 기존 데이터 사용
 
+	// if (memoCheck(memo) && memo.sectionBackLink && memo.sectionBackLink.length > 0) {
 	if (memoCheck(memo)) {
 		const removedSections = currentSection.filter((section) => !memo.sectionBackLink.includes(section))
 		figma.root.setPluginData(key, JSON.stringify(memo))
 		setMemoListModel([key], 'add')
 		return removedSections
 	} else {
+		//
 		figma.root.setPluginData(key, '')
 		setMemoListModel([key], 'remove')
 		return currentSection
@@ -150,4 +154,30 @@ export const componentKeyParser = (key: string) => {
 		return { pageId, nodeId }
 	}
 	return null
+}
+
+export const generateMemoKey = () => {
+	return prefix.memo + generateRandomText2()
+}
+
+export const clientMemoEmit = () => {
+	const signalKey = duplexConcatWithType2('signal', 'memos')
+	const dataKey = duplexConcatWithType2('data', 'memos')
+
+	const event = dataMemosOn('DATA_memos', (args) => {
+		// 기존 데이터 확인
+		const before = { ...duplexKeysAndSignal.memos.value }
+		for (const key in args) {
+			const memo = args[key]
+			if (memo.key === '') {
+				delete before[key]
+			} else {
+				before[key] = memo
+			}
+		}
+		duplexKeysAndSignal.memos.value = before
+	})
+
+	signalEmit(signalKey)
+	return event
 }

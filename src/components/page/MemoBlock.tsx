@@ -10,6 +10,7 @@ import GithubIcon from '@/icon/GithubIcon'
 import NotionIcon from '@/icon/NotionIcon'
 import FigmaIcon from '@/icon/FigmaIcon'
 import LinkIcon from '@/icon/LinkIcon'
+import { dataMemosEmit } from '@/domain/memo/memoAdapter'
 
 type LinkType = 'figma' | 'notion' | 'github' | 'github code' | 'unknown'
 
@@ -46,6 +47,7 @@ type CurrentMemoPageProps = {
 }
 
 const linkSwitch = (link: string) => {
+	console.log('link,', link)
 	if (link.startsWith('https://www.figma.com/design/')) {
 		return 'figma'
 	}
@@ -69,8 +71,10 @@ const linkObject = (type: string, url: string) => {
 	return null
 }
 
-function CurrentMemoPage({ title, url }: Memo) {
+function CurrentMemoPage({ memoKey: key, title, url, category, ...props }: Memo & { memoKey: string }) {
 	// 섹션 정보 얻고
+
+	console.log(key, title, 'url::', url, category, props)
 	// 얻은 카테고리에 따라 메모 필터링해서 각 카테고리에 전달
 	const linkType = linkSwitch(url)
 	const linkInfo = linkObject(linkType, url)
@@ -79,15 +83,26 @@ function CurrentMemoPage({ title, url }: Memo) {
 
 	return (
 		<article>
-			<div>
+			<button
+				onClick={() => {
+					// remove
+					// @ts-ignore
+					dataMemosEmit('DATA_memos', {
+						[key]: {
+							key: '',
+						},
+					})
+				}}
+			>
 				{type === 'github' && <GithubIcon />}
 				{type === 'github code' && <GithubIcon />}
 				{type === 'notion' && <NotionIcon />}
 				{type === 'figma' && <FigmaIcon />}
 				{type === 'unknown' && <LinkIcon />}
-			</div>
-
+			</button>
+			<span>{category}</span>
 			<span>{title}</span>
+			<span>{JSON.stringify(props)}</span>
 		</article>
 	)
 }

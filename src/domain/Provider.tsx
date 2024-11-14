@@ -3,6 +3,7 @@ import { duplexKeysAndSignal, DuplexKeysType } from './duplex'
 import { useLayoutEffect } from 'preact/hooks'
 import { duplexConcatWithType2, dataOn, signalEmit } from './interface'
 import ClientModalProvider from '@/components/modal/Modal'
+import { clientMemoEmit } from './memo/memoRepo'
 
 /**
  * 이펙트에 데이터 등록 간소화
@@ -36,6 +37,8 @@ export const Duplex_Adapter = ({ children }: { children: ComponentChildren }) =>
 			DuplexEmit('sectionList'),
 			DuplexEmit('currentSection'),
 			DuplexEmit('category'),
+			// DuplexEmit('memos'),
+			clientMemoEmit(),
 		]
 
 		return () => {

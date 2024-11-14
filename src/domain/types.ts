@@ -13,16 +13,16 @@ export type FigmaUser = {
 }
 
 export type Memo = {
-	writer: UUID
 	key: MEMO_KEY
 	url: string
+	category: string
+	title: string
+	description: string
 	sectionBackLink: string[]
 	componentLink: string[]
-	cartagory: string
-	title: string
-	created: number
-	modified: number
-	description: string
+	writer: UUID
+	created?: number
+	modified?: number
 }
 /**
  * 고유하게 전체 메모 리스트를 저장

@@ -20,7 +20,7 @@ export const memoAtom = signal<Memo>({
 	url: '',
 	sectionBackLink: [],
 	componentLink: [],
-	cartagory: '',
+	category: '',
 	title: '',
 	created: Date.now(),
 	modified: Date.now(),

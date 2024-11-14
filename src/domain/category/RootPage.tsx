@@ -3,7 +3,7 @@ import { useSignal } from '@/hooks/useSignal'
 import { useEffect, useState } from 'preact/hooks'
 
 import { DuplexDataHandler, prefix } from '../interface'
-import { CurrentSectionInfo, SectionList } from '../types'
+import { CurrentSectionInfo, Memo, Memos, SectionList } from '../types'
 import { categoryAtom, currentCategoryAtom, hotTopic } from './categoryModel'
 import { addLayer } from '@/components/modal/Modal'
 import SectionPage from '../section/SectionPage'
@@ -16,14 +16,29 @@ import CategoryModal, { AddCategoryKey, RemoveCategoryKey } from './CategoryModa
 import SettingIcon from '@/icon/SettingIcon'
 import Setting from '@/components/page/Setting'
 import MemoModal from '../memo/MemoModal'
+import MemoPage from '../memo/MemoPage'
+import { memosAtom } from '../memo/memoModel'
+import { memoListAtom } from '../memo/memoModel'
 
 // 이름 추천 받아요
 
 // 카테고리 페이지가 거의 루트 페이지라고 할 수 있음
 
 function CategoryPage() {
+	const memos = useSignal(memosAtom)
+	const memoList = useSignal(memoListAtom)
 	const category = useSignal(categoryAtom)
 	const selectedCategory = useSignal(currentCategoryAtom)
+	const all = Object.values(memos)
+	const other = Object.keys(category).reduce(
+		(acc, cur) => {
+			acc[cur] = all.filter((memo) => memo.category === cur) as Memo[]
+			return acc
+		},
+		{} as Record<string, Memo[]>
+	)
+
+	const allMemo = { ...other, all }
 
 	const setSelectedCategory = (category: string) => {
 		currentCategoryAtom.value = category
@@ -41,6 +56,8 @@ function CategoryPage() {
 	const handleCategoryClick = (category: string) => {
 		setSelectedCategory(category)
 	}
+
+	console.log(memos)
 
 	return (
 		<div>
@@ -126,7 +143,11 @@ function CategoryPage() {
 
 			<main>
 				<div>{menus[selectedCategory as keyof typeof menus]}</div>
-				{selectedCategory === 'setting' && <Setting />}
+				{selectedCategory === 'setting' ? (
+					<Setting />
+				) : (
+					<MemoPage memos={allMemo[selectedCategory as keyof typeof allMemo]} />
+				)}
 			</main>
 			<button
 				onClick={() => {

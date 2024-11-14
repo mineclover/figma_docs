@@ -28,7 +28,7 @@ export const mainUser_Adapter = () => {
 
 			dataEmit('DATA_user', {
 				uuid: user.uuid,
-				name: user.name + 'sync',
+				name: user.name,
 			})
 		}
 	})

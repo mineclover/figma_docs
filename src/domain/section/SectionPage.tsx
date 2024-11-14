@@ -62,6 +62,10 @@ export const SectionPath = ({
 			{currentSection.map((section, index) => {
 				const context = section.alias === '' ? section.name : section.alias
 				const isLast = index === currentSection.length - 1
+				console.log(section)
+				if (section.type === 'SELECTED') {
+					return <span className={styles.selected}>{context}</span>
+				}
 				return (
 					<Fragment key={section.id}>
 						<span className={styles.content}>{context}</span>

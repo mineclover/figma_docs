@@ -3,7 +3,7 @@ import { prefix, selectedType } from '@/domain/interface'
 import { CurrentSectionInfo, FigmaUser, MEMO_KEY, Section, SectionID, SectionList } from '@/domain/types'
 import { getMemoModel, memoCheck, setMemoModel } from '../memo/memoRepo'
 // FilePathNodeSearch 모듈 경로 수정
-import { FilePathNodeSearch } from '@/figmaPluginUtils'
+import { FilePathNodeSearch, linkPathNodeType } from '@/figmaPluginUtils'
 
 /** 데이터 수정을 덮어씌우는 것보다 지정 키를 없애는 것이 좋음 */
 export const getSectionModel = (key: SectionID) => {
@@ -52,19 +52,14 @@ export const getCurrentPage = () => {
 export const getCurrentSectionModel = (node: BaseNode) => {
 	if (node) {
 		const paths = FilePathNodeSearch(node)
-		const sectionInfo: CurrentSectionInfo[] = paths.map((node, index) => {
-			if (index === 0) {
-				return {
-					id: node.id,
-					name: node.name,
-					type: 'SELECTED',
-					alias: node.getPluginData(prefix.alias),
-				}
-			}
+		const sectionInfo: CurrentSectionInfo[] = paths.map((node) => {
+			const isPathNode = linkPathNodeType.includes(node.type as (typeof linkPathNodeType)[number])
+			console.log(node, node.type, linkPathNodeType, isPathNode)
+
 			return {
 				id: node.id,
 				name: node.name,
-				type: node.type,
+				type: isPathNode ? node.type : 'SELECTED',
 				alias: node.getPluginData(prefix.alias),
 			}
 		})
@@ -131,7 +126,7 @@ export const setSectionModel = (key: SectionID, input: SectionList | '') => {
 			const memo = getMemoModel(memoKey)
 			// 섹션 백링크 제거...
 			if (memoCheck(memo)) {
-				memo.sectionBackLink = memo.sectionBackLink.filter((link) => link !== key)
+				memo.sectionBackLink = memo.sectionBackLink?.filter((link) => link !== key)
 				setMemoModel(memoKey, memo)
 			}
 			// 메모 내에 섹션 백링크에서 해당 섹션 키 제거

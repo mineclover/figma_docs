@@ -80,6 +80,11 @@
 			background-color: var(--figma-color-bg-selected);
 		}
 	}
+	.selected {
+		color: var(--figma-color-bg-brand);
+		white-space: nowrap;
+		font-weight: 700;
+	}
 }
 .wrapper {
 	padding: 8px;

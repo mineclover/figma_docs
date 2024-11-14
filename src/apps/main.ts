@@ -12,9 +12,11 @@ import {
 import { FilePathNodeSearch, FilePathSearch, linkPathNodeType } from '@/figmaPluginUtils'
 import { CurrentSectionInfo } from '@/domain/types'
 import { mainCategory_Adapter } from '@/domain/category/categoryAdapter'
+import { mainMemo_Adapter } from '@/domain/memo/memoAdapter'
 
 export default function () {
 	mainUser_Adapter()
+	mainMemo_Adapter()
 	mainSectionList_Adapter()
 	mainCategory_Adapter()
 	selectMainCurrentSection_Adapter()
