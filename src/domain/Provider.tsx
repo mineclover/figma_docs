@@ -6,10 +6,11 @@ import ClientModalProvider from '@/components/modal/Modal'
 import { clientMemoEmit } from './memo/memoRepo'
 
 /**
+ * ui
  * 이펙트에 데이터 등록 간소화
  * 등록할 키 리스트로 리스트 생성해서 반복 처리
  */
-export const DuplexEmit = <T extends DuplexKeysType>(handlerKey: T) => {
+export const uiDuplexEmit = <T extends DuplexKeysType>(handlerKey: T) => {
 	const signalKey = duplexConcatWithType2('signal', handlerKey)
 	const dataKey = duplexConcatWithType2('data', handlerKey)
 
@@ -32,12 +33,13 @@ export const Duplex_Adapter = ({ children }: { children: ComponentChildren }) =>
 		// 항상 열려있는 인터페이스
 		// 공식 루트
 		const events = [
-			DuplexEmit('user'),
-			DuplexEmit('section'),
-			DuplexEmit('sectionList'),
-			DuplexEmit('currentSection'),
-			DuplexEmit('category'),
-			// DuplexEmit('memos'),
+			uiDuplexEmit('user'),
+			uiDuplexEmit('allUser'),
+			uiDuplexEmit('section'),
+			uiDuplexEmit('sectionList'),
+			uiDuplexEmit('currentSection'),
+			uiDuplexEmit('category'),
+			// DuplexEmit('memos') >> clientMemoEmit 로 대체,
 			clientMemoEmit(),
 		]
 

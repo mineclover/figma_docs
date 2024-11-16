@@ -27,6 +27,22 @@ export interface SignalHandler extends EventHandler {
 	handler: (random?: string) => void
 }
 
+export interface DataHandlerV2<T extends string, U> extends EventHandler {
+	name: ConcatStrings<'DATA_', T>
+	handler: (args: U) => void
+}
+// 예시
+// export type DataUserHandler = DuplexDataHandler<'user'>
+
+/**
+ * Duplex 호환
+ * 시그널 인터페이스 v2
+ */
+export interface SignalHandlerV2<T extends string> extends EventHandler {
+	name: ConcatStrings<'SIGNAL_', T>
+	handler: (random?: string) => void
+}
+
 /**
  * Duplex 호환
  * 데이터 인터페이스 v2
@@ -143,12 +159,19 @@ export const prefix = {
 	memo: 'MEMO_',
 	user: 'USER_',
 	component: 'COMPONENT_',
+
+	pub: 'PUB_',
+} as const
+
+export const constant = {
+	allUser: '⟅ALL_USER⟆',
 	sectionList: '⟅SECTION_LIST⟆',
 	memoList: '⟅MEMO_LIST⟆',
 	currentSection: '⟅CURRENT_SECTION⟆',
 	category: '⟅CATEGORY⟆',
 	alias: '⟅ALIAS⟆',
-} as const
+	pub: '⟅PUB⟆',
+}
 
 export const splitSymbol = '⁑'
 export const selectedType = 'SELECTED'
@@ -186,7 +209,7 @@ export const asyncEmit = <T extends DuplexKeysType>(handlerKey: T, delay?: numbe
 	})
 
 // enum 키 합성 타입 정의
-type ConcatStrings<A extends string, B extends string> = `${A}${B}`
+export type ConcatStrings<A extends string, B extends string> = `${A}${B}`
 
 // duplex 용 enum 키 합성 타입 정의
 export type DuplexConcatStrings<A extends (typeof prefix)[keyof typeof prefix], B extends DuplexKeysType> = `${A}${B}`

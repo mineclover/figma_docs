@@ -8,7 +8,7 @@ import {
 	clearAllSectionListModel,
 	setSectionListModel,
 	setSectionModel,
-	getSectionListModel,
+	getAllSectionListModel,
 	getCurrentSelection,
 	getCurrentSectionModel,
 	setCurrentSectionModel,
@@ -89,7 +89,7 @@ export const mainSectionList_Adapter = () => {
 		dataEmitList('DATA_sectionList', newSectionList)
 	})
 	signalOnList('SIGNAL_sectionList', async (key) => {
-		const sectionList = getSectionListModel()
+		const sectionList = getAllSectionListModel()
 		signalReceiving('sectionList', key)(sectionList)
 	})
 }

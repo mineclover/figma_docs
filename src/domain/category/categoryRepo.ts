@@ -1,4 +1,4 @@
-import { prefix } from '../interface'
+import { constant, prefix } from '../interface'
 import { MemoCategoryList } from '../types'
 
 const DefaultCategory: MemoCategoryList = {
@@ -10,11 +10,11 @@ const DefaultCategory: MemoCategoryList = {
 }
 
 export const setMainCategory = (category: MemoCategoryList) => {
-	figma.root.setPluginData(prefix.category, JSON.stringify(category))
+	figma.root.setPluginData(constant.category, JSON.stringify(category))
 }
 
 export const getMainCategory = () => {
-	const category = figma.root.getPluginData(prefix.category)
+	const category = figma.root.getPluginData(constant.category)
 	if (!category) {
 		setMainCategory(DefaultCategory)
 		return DefaultCategory

@@ -1,5 +1,5 @@
 import { generateRandomText2 } from '@/utils/textTools'
-import { prefix, selectedType } from '@/domain/interface'
+import { constant, prefix, selectedType } from '@/domain/interface'
 import { CurrentSectionInfo, FigmaUser, MEMO_KEY, Section, SectionID, SectionList } from '@/domain/types'
 import { getMemoModel, memoCheck, setMemoModel } from '../memo/memoRepo'
 // FilePathNodeSearch 모듈 경로 수정
@@ -9,7 +9,7 @@ import { FilePathNodeSearch, linkPathNodeType } from '@/figmaPluginUtils'
 export const getSectionModel = (key: SectionID) => {
 	const data = figma.root.getPluginData(key)
 	if (data === '') {
-		return data
+		return
 	}
 	const memoList = JSON.parse(data) as MEMO_KEY[]
 	if (!Array.isArray(memoList)) {
@@ -25,16 +25,32 @@ export const getSectionModel = (key: SectionID) => {
  * @returns 저장 값 반환 ( 로직에서 데이터가 흐르게 구성해봤음 )
  */
 export const setSectionListModel = (input: SectionList) => {
-	figma.root.setPluginData(prefix.sectionList, JSON.stringify(input))
+	figma.root.setPluginData(constant.sectionList, JSON.stringify(input))
 	return input
 }
 
-export const getSectionListModel = () => {
-	const sectionList = figma.root.getPluginData(prefix.sectionList)
+export const getAllSectionListModel = () => {
+	const sectionList = figma.root.getPluginData(constant.sectionList)
 	if (sectionList === '') {
 		return []
 	}
 	return JSON.parse(sectionList) as SectionList
+}
+
+/** 리스트 내 데이터 조회 */
+export const getSectionListModel = (list: SectionList) => {
+	const sectionList = list.reduce((prev, text) => {
+		const sectionMemo = getSectionModel(text)
+		if (sectionMemo) {
+			return {
+				...prev,
+				[text]: sectionMemo,
+			}
+		}
+		return {}
+	}, {} as Section)
+
+	return sectionList
 }
 
 export const getCurrentSelection = () => {
@@ -55,12 +71,13 @@ export const getCurrentSectionModel = (node: BaseNode) => {
 		const sectionInfo: CurrentSectionInfo[] = paths.map((node) => {
 			const isPathNode = linkPathNodeType.includes(node.type as (typeof linkPathNodeType)[number])
 			console.log(node, node.type, linkPathNodeType, isPathNode)
+			// 섹션 구성에 컴포넌트를 저장하려할 때
 
 			return {
 				id: node.id,
 				name: node.name,
 				type: isPathNode ? node.type : 'SELECTED',
-				alias: node.getPluginData(prefix.alias),
+				alias: node.getPluginData(constant.alias),
 			}
 		})
 		return sectionInfo
@@ -75,7 +92,7 @@ export const setCurrentSectionModel = async (input: CurrentSectionInfo[]) => {
 		const node = await figma.getNodeByIdAsync(item.id)
 
 		if (node) {
-			node.setPluginData(prefix.alias, item.alias)
+			node.setPluginData(constant.alias, item.alias)
 		}
 	}
 }
@@ -85,7 +102,7 @@ export const setCurrentSectionModel = async (input: CurrentSectionInfo[]) => {
  * 빈 섹션은 제거
  */
 export const clearAllSectionListModel = () => {
-	const sectionList = getSectionListModel()
+	const sectionList = getAllSectionListModel()
 	// 조회
 	// 이건 전체 섹션 생성하면
 	const entries = sectionList
@@ -116,7 +133,7 @@ export const setSectionModel = (key: SectionID, input: SectionList | '') => {
 	// 섹션이 지워졌을 때 메모들에 섹션들에 대한 삭제 전파가 되야한다
 	if (input === '') {
 		const before = getSectionModel(key)
-		if (before === '') {
+		if (before == null) {
 			// figma.root.setPluginData(key, '')
 			return
 		}

@@ -1,6 +1,6 @@
 import { generateRandomText2 } from '@/utils/textTools'
-import { dataOn, duplexConcatWithType2, prefix, signalEmit, splitSymbol } from '@/domain/interface'
-import { FigmaUser, Memo, MEMO_KEY, Memos, SectionID, SectionList } from '@/domain/types'
+import { constant, dataOn, duplexConcatWithType2, prefix, signalEmit, splitSymbol } from '@/domain/interface'
+import { FigmaUser, Memo, MEMO_KEY, MemoList, Memos, SectionID, SectionList } from '@/domain/types'
 import { getSectionModel } from '../section/sectionRepo'
 import { AddMemoType } from '../utils/featureType'
 import { DuplexKeysType, duplexKeysAndSignal } from '../duplex'
@@ -89,8 +89,25 @@ export const setMemoModel = (key: MEMO_KEY, memo: Memo | AddMemoType | NullMemo)
  * 전체 메모 리스트 조회
  * @returns
  */
-export const getMemoListModel = () => {
-	const memoList = figma.root.getPluginData(prefix.memoList)
+export const getMemoListModel = (memoList: MemoList) => {
+	if (memoList.length < 1) {
+		return
+	}
+
+	return memoList
+		.map((key) => getMemoModel(key))
+		.filter((item) => item !== '')
+		.reduce((acc, memo) => {
+			return { ...acc, [memo.key]: memo }
+		}, {}) as Memos
+}
+
+/**
+ * 전체 메모 리스트 조회
+ * @returns
+ */
+export const getAllMemoListModel = () => {
+	const memoList = figma.root.getPluginData(constant.memoList)
 	if (memoList === '') {
 		return []
 	}
@@ -103,14 +120,14 @@ export const getMemoListModel = () => {
  * @param action 추가 또는 삭제
  */
 export const setMemoListModel = (input: MEMO_KEY[], action: 'add' | 'remove') => {
-	const before = getMemoListModel()
+	const before = getAllMemoListModel()
 
 	if (action === 'add') {
 		const after = [...before, ...input].filter((item, index, self) => self.indexOf(item) === index)
-		figma.root.setPluginData(prefix.memoList, JSON.stringify(after))
+		figma.root.setPluginData(constant.memoList, JSON.stringify(after))
 	} else if (action === 'remove') {
 		const after = before.filter((item) => !input.includes(item))
-		figma.root.setPluginData(prefix.memoList, JSON.stringify(after))
+		figma.root.setPluginData(constant.memoList, JSON.stringify(after))
 	}
 }
 
@@ -120,7 +137,7 @@ export const setMemoListModel = (input: MEMO_KEY[], action: 'add' | 'remove') =>
  * @returns
  */
 export const getAllMemoListDataModel = () => {
-	const memoList = getMemoListModel()
+	const memoList = getAllMemoListModel()
 	return memoList
 		.map((key) => getMemoModel(key))
 		.filter((item) => item !== '')

@@ -3,6 +3,7 @@ export type MEMO_KEY = string
 /**
  * 섹션 고유 식별 아이디
  * 계층 구조적 주소를 아이디로 씀
+ * 고유키를 따로 줘야할지 고민하고 있음
  *
  */
 export type SectionID = string
@@ -10,6 +11,9 @@ export type SectionID = string
 export type FigmaUser = {
 	uuid: UUID
 	name: string
+}
+export type Users = {
+	[key: FigmaUser['uuid']]: FigmaUser['name']
 }
 
 export type Memo = {
@@ -53,9 +57,18 @@ export type CurrentSectionInfo = {
 	alias: string
 }
 
-export type MemoCategory = string
+export type MemoCategoryKey = string
 
 /**
  * key를 카테고리로 value를 설명으로 구성하는게 더 좋을 것 같음
  */
-export type MemoCategoryList = Record<MemoCategory, string>
+export type MemoCategoryList = Record<MemoCategoryKey, string>
+
+// 전체 유저리스트 관리하고
+// 그 유저 아이디 기반으로 개별 펍 만들어서 엑세스
+export type Pub = {
+	memos: MEMO_KEY[]
+	category: MemoCategoryKey[]
+	section: SectionID[]
+	user: FigmaUser['uuid'][]
+}

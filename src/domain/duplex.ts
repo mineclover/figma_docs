@@ -1,4 +1,4 @@
-import { userAtom } from './user/userModel'
+import { allUserAtom, userAtom } from './user/userModel'
 import { Signal } from '@preact/signals-core'
 import { currentSectionAtom, hotTopicListAtom, sectionAtom, sectionListAtom } from './section/sectionModel'
 import { memoAtom, memoListAtom, memosAtom } from './memo/memoModel'
@@ -17,6 +17,7 @@ import { categoryAtom, currentCategoryAtom } from './category/categoryModel'
  */
 export const duplexKeysAndSignal = {
 	user: userAtom,
+	allUser: allUserAtom,
 	memo: memoAtom,
 	memos: memosAtom,
 	memoList: memoListAtom,
