@@ -2,7 +2,7 @@ import { render, useWindowResize } from '@create-figma-plugin/ui'
 import { h } from 'preact'
 
 import { emit } from '@create-figma-plugin/utilities'
-import { ResizeWindowHandler } from '../adapter/types'
+import { ResizeWindowHandler } from '../figmaPluginUtils/types'
 
 import { AppProvider } from '@/domain/Provider'
 import CategoryPage from '@/domain/category/RootPage'

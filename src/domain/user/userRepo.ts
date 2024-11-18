@@ -1,6 +1,7 @@
 import { generateRandomText2 } from '@/utils/textTools'
 import { constant, prefix } from '@/domain/interface'
 import { FigmaUser, Users } from '@/domain/types'
+import { publish } from '../system/sysyemRepo'
 
 const generateUUID = () => {
 	return prefix['user'] + generateRandomText2()
@@ -15,6 +16,7 @@ export const updateAllUser = ({ uuid, name }: FigmaUser) => {
 	const users = getAllUser()
 	const after = { ...users, [uuid]: name }
 	figma.root.setPluginData(constant.allUser, JSON.stringify(after))
+	// 마땅히 트리거가 없다
 }
 
 /** 다른 프로젝트 간 데이터 흭득을 위해 사용됨 */
@@ -37,5 +39,10 @@ export const getUserModel = async () => {
 }
 
 export const setUserName = (name: string) => {
-	return figma.clientStorage.setAsync('name', name)
+	figma.clientStorage.setAsync('name', name)
+	figma.clientStorage.getAsync('uuid').then((uuid) => {
+		publish({
+			users: [uuid],
+		})
+	})
 }

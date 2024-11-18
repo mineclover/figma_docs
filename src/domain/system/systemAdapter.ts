@@ -14,15 +14,20 @@ import {
 	signalReceiving,
 } from '../interface'
 import { Pub } from '../types'
+import { getCurrentPub, mainPubSignal, pubCheck, pubClear } from './sysyemRepo'
 
 // 딱히 저장돠는 건 없고 처리로직이 필요한 상태
 
 type PubDataHandler = DataHandlerV2<'pub', Pub>
 type PubSignalSHandler = SignalHandlerV2<'pub'>
 
-export const mainPub = () => {
-	on<PubSignalSHandler>('SIGNAL_pub', (key) => {
-		signalReceiving('memos', key)
-		signalReceiving('memos', key)
+export const mainPub_Adapter = () => {
+	on<PubSignalSHandler>('SIGNAL_pub', async (key) => {
+		const pub = await getCurrentPub()
+		console.log('SIGNAL_pub', pub)
+		if (pubCheck(pub)) {
+			mainPubSignal(pub)
+			pubClear()
+		}
 	})
 }

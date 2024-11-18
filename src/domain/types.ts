@@ -70,5 +70,5 @@ export type Pub = {
 	memos: MEMO_KEY[]
 	category: MemoCategoryKey[]
 	section: SectionID[]
-	user: FigmaUser['uuid'][]
+	users: FigmaUser['uuid'][]
 }

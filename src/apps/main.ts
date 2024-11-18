@@ -1,6 +1,6 @@
 import { on, once, showUI } from '@create-figma-plugin/utilities'
-import { adapterSampleHandler, CloseHandler, ResizeWindowHandler } from '../adapter/types'
-import { mainUser_Adapter } from '@/domain/user/userAdapter'
+import { adapterSampleHandler, CloseHandler, ResizeWindowHandler } from '../figmaPluginUtils/types'
+import { allUser_Adapter, mainUser_Adapter } from '@/domain/user/userAdapter'
 import {
 	mainSectionList_Adapter,
 	pageMainCurrentSection_Adapter,
@@ -13,13 +13,16 @@ import { FilePathNodeSearch, FilePathSearch, linkPathNodeType } from '@/figmaPlu
 import { CurrentSectionInfo } from '@/domain/types'
 import { mainCategory_Adapter } from '@/domain/category/categoryAdapter'
 import { mainMemo_Adapter } from '@/domain/memo/memoAdapter'
+import { mainPub_Adapter } from '@/domain/system/systemAdapter'
 
 export default function () {
 	mainUser_Adapter()
+	allUser_Adapter()
 	mainMemo_Adapter()
 	mainSectionList_Adapter()
 	mainCategory_Adapter()
 	selectMainCurrentSection_Adapter()
+	mainPub_Adapter()
 	//on 이벤트들은 중첩 됨
 
 	signalOnCurrentSection('SIGNAL_currentSection', (key) => {

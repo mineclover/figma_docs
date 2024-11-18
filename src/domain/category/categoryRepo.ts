@@ -1,5 +1,7 @@
 import { constant, prefix } from '../interface'
+import { publish } from '../system/sysyemRepo'
 import { MemoCategoryList } from '../types'
+import { getUserModel } from '../user/userRepo'
 
 const DefaultCategory: MemoCategoryList = {
 	Plan: '기획 문서나 버전 관련 변경 내역, 작업 히스토리',
@@ -11,6 +13,9 @@ const DefaultCategory: MemoCategoryList = {
 
 export const setMainCategory = (category: MemoCategoryList) => {
 	figma.root.setPluginData(constant.category, JSON.stringify(category))
+	publish({
+		category: Object.keys(category),
+	})
 }
 
 export const getMainCategory = () => {

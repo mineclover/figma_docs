@@ -2,7 +2,7 @@ import { h } from 'preact'
 import { useSignal } from '@/hooks/useSignal'
 import { useEffect, useState } from 'preact/hooks'
 
-import { DuplexDataHandler, prefix } from '../interface'
+import { DuplexDataHandler, prefix, signalEmit } from '../interface'
 import { CurrentSectionInfo, Memo, Memos, SectionList } from '../types'
 import { categoryAtom, currentCategoryAtom, hotTopic } from './categoryModel'
 import { addLayer } from '@/components/modal/Modal'
@@ -57,6 +57,11 @@ function CategoryPage() {
 		setSelectedCategory(category)
 	}
 
+	useEffect(() => {
+		// 카테고리 탭 바꿀 때 pub 조회
+
+		signalEmit('SIGNAL_pub')
+	}, [selectedCategory])
 	console.log(memos)
 
 	return (

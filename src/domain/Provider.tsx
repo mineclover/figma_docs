@@ -1,7 +1,7 @@
 import { ComponentChildren, Fragment, h } from 'preact'
 import { duplexKeysAndSignal, DuplexKeysType } from './duplex'
 import { useLayoutEffect } from 'preact/hooks'
-import { duplexConcatWithType2, dataOn, signalEmit } from './interface'
+import { duplexConcatWithType2, dataOn, signalEmit, constant } from './interface'
 import ClientModalProvider from '@/components/modal/Modal'
 import { clientMemoEmit } from './memo/memoRepo'
 

@@ -5,6 +5,7 @@ import { getSectionModel } from '../section/sectionRepo'
 import { AddMemoType } from '../utils/featureType'
 import { DuplexKeysType, duplexKeysAndSignal } from '../duplex'
 import { dataMemosOn } from './memoAdapter'
+import { publish } from '../system/sysyemRepo'
 
 /** 다른 키 없이 빈 메모 */
 type NullMemo = { key: MEMO_KEY }
@@ -76,11 +77,17 @@ export const setMemoModel = (key: MEMO_KEY, memo: Memo | AddMemoType | NullMemo)
 		const removedSections = currentSection.filter((section) => !memo.sectionBackLink.includes(section))
 		figma.root.setPluginData(key, JSON.stringify(memo))
 		setMemoListModel([key], 'add')
+		publish({
+			memos: [key],
+		})
 		return removedSections
 	} else {
 		//
 		figma.root.setPluginData(key, '')
 		setMemoListModel([key], 'remove')
+		publish({
+			memos: [key],
+		})
 		return currentSection
 	}
 }
@@ -129,6 +136,9 @@ export const setMemoListModel = (input: MEMO_KEY[], action: 'add' | 'remove') =>
 		const after = before.filter((item) => !input.includes(item))
 		figma.root.setPluginData(constant.memoList, JSON.stringify(after))
 	}
+	publish({
+		memos: input,
+	})
 }
 
 /**
@@ -154,7 +164,7 @@ export const getAllMemoListDataModel = () => {
  */
 export const getSectionMemoListDataModel = (key: SectionID) => {
 	const memoList = getSectionModel(key)
-	if (memoList.length === 0 || memoList === '') {
+	if (memoList == null || memoList.length === 0) {
 		return []
 	}
 	return memoList.map((item) => getMemoModel(item)).filter((item) => item !== '')

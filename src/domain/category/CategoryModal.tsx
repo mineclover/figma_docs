@@ -1,5 +1,5 @@
 import { ComponentChildren, Fragment, h } from 'preact'
-import { useState } from 'preact/hooks'
+import { useEffect, useState } from 'preact/hooks'
 
 import styles from './category.module.css'
 import { dataCategoryEmit } from './categoryAdapter'
@@ -8,6 +8,7 @@ import { categoryAtom } from './categoryModel'
 import { useSignal } from '@/hooks/useSignal'
 import { clc } from '@/components/modal/utils'
 import { deleteLayer } from '@/components/modal/Modal'
+import { signalEmit } from '../interface'
 
 function AddCategoryModal() {
 	const category = useSignal<MemoCategoryList>(categoryAtom)

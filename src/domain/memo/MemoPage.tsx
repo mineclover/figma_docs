@@ -1,5 +1,5 @@
 import { ComponentChildren, Fragment, h } from 'preact'
-import { useState } from 'preact/hooks'
+import { useEffect, useState } from 'preact/hooks'
 
 import styles from './memo.module.css'
 
@@ -14,7 +14,7 @@ import { SectionPath } from '../section/SectionPage'
 import { currentSectionAtom } from '../section/sectionModel'
 import { currentCategoryAtom } from '../category/categoryModel'
 import { AddMemoType } from '../utils/featureType'
-import { selectedType } from '../interface'
+import { selectedType, signalEmit } from '../interface'
 import { componentKeyBuilder, generateMemoKey } from './memoRepo'
 import { getSectionKey } from '../section/sectionRepo'
 import { userAtom } from '../user/userModel'

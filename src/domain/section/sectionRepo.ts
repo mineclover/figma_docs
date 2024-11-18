@@ -4,6 +4,7 @@ import { CurrentSectionInfo, FigmaUser, MEMO_KEY, Section, SectionID, SectionLis
 import { getMemoModel, memoCheck, setMemoModel } from '../memo/memoRepo'
 // FilePathNodeSearch 모듈 경로 수정
 import { FilePathNodeSearch, linkPathNodeType } from '@/figmaPluginUtils'
+import { publish } from '../system/sysyemRepo'
 
 /** 데이터 수정을 덮어씌우는 것보다 지정 키를 없애는 것이 좋음 */
 export const getSectionModel = (key: SectionID) => {
@@ -26,6 +27,9 @@ export const getSectionModel = (key: SectionID) => {
  */
 export const setSectionListModel = (input: SectionList) => {
 	figma.root.setPluginData(constant.sectionList, JSON.stringify(input))
+	publish({
+		section: input,
+	})
 	return input
 }
 
@@ -113,6 +117,9 @@ export const clearAllSectionListModel = () => {
 	const newSectionList = Object.keys(allSection)
 	// 빈 섹션 제거
 	setSectionListModel(newSectionList)
+	publish({
+		section: newSectionList,
+	})
 	return newSectionList
 	// allSection
 }
@@ -134,6 +141,7 @@ export const setSectionModel = (key: SectionID, input: SectionList | '') => {
 	if (input === '') {
 		const before = getSectionModel(key)
 		if (before == null) {
+			// 없어서 지울게 없음
 			// figma.root.setPluginData(key, '')
 			return
 		}
@@ -153,6 +161,11 @@ export const setSectionModel = (key: SectionID, input: SectionList | '') => {
 		figma.root.setPluginData(key, '')
 	} else {
 		figma.root.setPluginData(key, JSON.stringify(input))
+	}
+	if (key) {
+		publish({
+			section: [key],
+		})
 	}
 }
 
