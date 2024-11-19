@@ -6,6 +6,11 @@
 
 # 기능 정의
 
+## 라이브러리 아이콘
+
+[아이콘 스토리북](https://yuanqing.github.io/create-figma-plugin/storybook/?path=/story/icons-size-8--control-chevron-down)
+Layer 로 시작한느거 많이 쓸 것 같음
+
 ## 필터 기능
 
 - 전체 메모를 볼 것인지 여부 (기본 값 : false)

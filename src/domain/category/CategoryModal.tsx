@@ -21,7 +21,7 @@ function AddCategoryModal() {
 			className={clc(styles.modal, styles.add)}
 			onSubmit={(e) => {
 				e.preventDefault()
-				console.log(e, inputCategory, description)
+				console.log('DATA_category', e, inputCategory, description)
 				dataCategoryEmit('DATA_category', {
 					...category,
 					[inputCategory]: description,

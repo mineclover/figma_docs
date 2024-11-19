@@ -16,6 +16,9 @@ export type Users = {
 	[key: FigmaUser['uuid']]: FigmaUser['name']
 }
 
+/** {페이지아이디}:{노드아이디} */
+export type ComponentKey = string
+
 export type Memo = {
 	key: MEMO_KEY
 	url: string
@@ -23,7 +26,7 @@ export type Memo = {
 	title: string
 	description: string
 	sectionBackLink: string[]
-	componentLink: string[]
+	componentLink: ComponentKey[]
 	writer: UUID
 	created?: number
 	modified?: number

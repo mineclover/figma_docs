@@ -1,5 +1,5 @@
 import { ComponentChildren, Fragment, h } from 'preact'
-import { useState } from 'preact/hooks'
+import { Dispatch, StateUpdater, useState } from 'preact/hooks'
 
 import styles from './memo.module.css'
 
@@ -10,14 +10,56 @@ import { clc } from '@/components/modal/utils'
 import { deleteLayer } from '@/components/modal/Modal'
 import { memoAtom } from './memoModel'
 import { dataMemoEmit, dataMemosEmit } from './memoAdapter'
-import { SectionPath } from '../section/SectionPage'
+import { NodePath, SectionPath } from '../section/SectionPage'
 import { currentSectionAtom } from '../section/sectionModel'
 import { currentCategoryAtom } from '../category/categoryModel'
 import { AddMemoType } from '../utils/featureType'
 import { selectedType } from '../interface'
-import { componentKeyBuilder, generateMemoKey } from './memoRepo'
+import {
+	componentKeyParser,
+	generateMemoKey,
+	getCurrentSectionToComponentKey,
+	getCurrentSectionToComponentName,
+} from '../interfaceBuilder'
+import { componentKeyBuilder } from '../interfaceBuilder'
 import { getSectionKey } from '../section/sectionRepo'
 import { userAtom } from '../user/userModel'
+import { NodeZoomHandler } from '@/figmaPluginUtils/types'
+import { emit } from '@create-figma-plugin/utilities'
+import { IconCross32, IconPlus32, IconTarget16, IconTarget32, IconTrash32 } from '@create-figma-plugin/ui'
+
+const ComponentKeyButton = ({
+	component,
+	useSelectedComponent,
+}: {
+	component: [string, string]
+	useSelectedComponent: [Map<string, string>, Dispatch<StateUpdater<Map<string, string>>>]
+}) => {
+	const [selectedComponent, setSelectedComponent] = useSelectedComponent
+	const [componentKey, componentName] = component
+	const parsed = componentKeyParser(componentKey)
+	if (!parsed) return null
+	const { pageId, nodeId } = parsed
+	return (
+		<div className={styles.row}>
+			<button onClick={() => emit<NodeZoomHandler>('NODE_ZOOM', { pageId, nodeId })}>
+				<IconTarget32 />
+			</button>
+			<span className={styles.flexGrow}>{componentName}</span>
+			<button
+				className={styles.flexShrink}
+				onClick={() =>
+					setSelectedComponent((prev) => {
+						prev.delete(componentKey)
+						return new Map(prev)
+					})
+				}
+			>
+				<IconTrash32 />
+			</button>
+		</div>
+	)
+}
 
 function AddMemoModal() {
 	const memo = useSignal<Memo>(memoAtom)
@@ -33,55 +75,100 @@ function AddMemoModal() {
 	const [inputDescription, setDescription] = useState<string>('')
 	const [inputTitle, setTitle] = useState<string>('')
 
+	// 이름을 따로 저장하진 않는 상태
+	// 개별 컴포넌트에 대한 데이터를 처리하는 건 다음 MVP
+	const useSelectedComponent = useState<Map<string, string>>(new Map([]))
+	const [selectedComponent, setSelectedComponent] = useSelectedComponent
+
 	return (
-		<form
-			className={clc(styles.modal, styles.add)}
-			onSubmit={(e) => {
-				e.preventDefault()
-				const newMemo = {
-					key: memoKey,
-					url: inputUrl,
-					title: inputTitle,
-					description: inputDescription,
-					category: selectedCategory,
-					writer: currentUser.uuid,
-					sectionBackLink: [getSectionKey(currentSection, 'section')],
-					componentLink: [componentKeyBuilder(pageId, nodeId)],
-				} as AddMemoType
+		<div className={styles.addModal}>
+			<button className={styles.close}>
+				<h2 className={styles.title}>메모 추가</h2>
 
-				dataMemosEmit('DATA_memos', { [memoKey]: newMemo })
-			}}
-		>
-			<span className={styles.header}>메모 추가</span>
-			<span>{currentUser.name}</span>
-			<span>현재 카테고리: {selectedCategory}</span>
-			<span>{memoKey}</span>
-			<SectionPath className={styles.section} currentSection={currentSection} pageId={pageId} />
-			<hr className={styles.divider} />
-			<input
-				type="text"
-				className={styles.title}
-				value={inputTitle}
-				placeholder="메모 제목"
-				onInput={(e) => setTitle(e.currentTarget.value)}
-			/>
-			<input
-				type="text"
-				value={inputUrl}
-				className={styles.main}
-				placeholder="메모 링크"
-				onInput={(e) => setUrl(e.currentTarget.value)}
-			/>
+				<IconCross32 className={styles.icon} onClick={() => deleteLayer(AddMemoKey)} />
+			</button>
+			<form
+				className={clc(styles.modal, styles.add)}
+				onSubmit={(e) => {
+					e.preventDefault()
+					console.log(
+						'currentSection',
+						currentSection.filter((section) => section.type === selectedType)
+					)
+					const newMemo = {
+						key: memoKey,
+						url: inputUrl,
+						title: inputTitle,
+						description: inputDescription,
+						category: selectedCategory,
+						writer: currentUser.uuid,
+						sectionBackLink: [getSectionKey(currentSection, 'section')],
+						componentLink: [...selectedComponent.keys()],
+					} as AddMemoType
 
-			<textarea
-				type="text"
-				className={styles.description}
-				value={inputDescription}
-				placeholder="메모 설명"
-				onInput={(e) => setDescription(e.currentTarget.value)}
-			/>
-			<button className={styles.submit}>추가</button>
-		</form>
+					console.log('newMemo', { [memoKey]: newMemo })
+					// dataMemosEmit('DATA_memos', { [memoKey]: newMemo })
+				}}
+			>
+				<span className={styles.header}>
+					Tab Name: <b>{selectedCategory}</b>
+				</span>
+
+				<SectionPath className={styles.section} currentSection={currentSection} pageId={pageId} />
+				<hr className={styles.divider} />
+				<input
+					type="text"
+					className={styles.title}
+					value={inputTitle}
+					placeholder="메모 제목"
+					onInput={(e) => setTitle(e.currentTarget.value)}
+				/>
+				<input
+					type="text"
+					value={inputUrl}
+					className={styles.main}
+					placeholder="메모 링크"
+					onInput={(e) => setUrl(e.currentTarget.value)}
+				/>
+
+				<textarea
+					type="text"
+					className={styles.description}
+					value={inputDescription}
+					placeholder="메모 설명"
+					onInput={(e) => setDescription(e.currentTarget.value)}
+				/>
+				<button className={styles.submit}>추가</button>
+			</form>
+			<NodePath currentSection={currentSection} pageId={pageId} />
+			<section className={styles.component}>
+				<button
+					className={clc(styles.componentAdd, styles.row)}
+					onClick={() => {
+						setSelectedComponent((prev) => {
+							const componentKey = getCurrentSectionToComponentKey(currentSection, 'node')
+							const componentName = getCurrentSectionToComponentName(currentSection, 'node')
+							if (componentKey && componentName) {
+								prev.set(componentKey, componentName)
+								return new Map(prev)
+							}
+							return prev
+						})
+					}}
+				>
+					<IconPlus32 />
+					<span> 참조 노드 추가</span>
+				</button>
+				{selectedComponent.size > 0 && (
+					<div className={styles.column}>
+						{selectedComponent &&
+							Array.from(selectedComponent).map((component) => {
+								return <ComponentKeyButton component={component} useSelectedComponent={useSelectedComponent} />
+							})}
+					</div>
+				)}
+			</section>
+		</div>
 	)
 }
 

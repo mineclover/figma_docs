@@ -1,5 +1,4 @@
-import { generateRandomText2 } from '@/utils/textTools'
-import { constant, dataOn, duplexConcatWithType2, prefix, signalEmit, splitSymbol } from '@/domain/interface'
+import { constant, dataOn, duplexConcatWithType2, signalEmit } from '@/domain/interface'
 import { FigmaUser, Memo, MEMO_KEY, MemoList, Memos, SectionID, SectionList } from '@/domain/types'
 import { getSectionModel } from '../section/sectionRepo'
 import { AddMemoType } from '../utils/featureType'
@@ -168,23 +167,6 @@ export const getSectionMemoListDataModel = (key: SectionID) => {
 		return []
 	}
 	return memoList.map((item) => getMemoModel(item)).filter((item) => item !== '')
-}
-
-export const componentKeyBuilder = (pageId: string, nodeId: string) => {
-	// return `${prefix.component}${pageId}${splitSymbol}${nodeId}`
-	return `${pageId}${splitSymbol}${nodeId}`
-}
-
-export const componentKeyParser = (key: string) => {
-	const [pageId, nodeId] = key.split(splitSymbol)
-	if (pageId && nodeId) {
-		return { pageId, nodeId }
-	}
-	return null
-}
-
-export const generateMemoKey = () => {
-	return prefix.memo + generateRandomText2()
 }
 
 export const clientMemoEmit = () => {

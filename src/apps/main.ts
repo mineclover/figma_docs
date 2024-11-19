@@ -14,6 +14,7 @@ import { CurrentSectionInfo } from '@/domain/types'
 import { mainCategory_Adapter } from '@/domain/category/categoryAdapter'
 import { mainMemo_Adapter } from '@/domain/memo/memoAdapter'
 import { mainPub_Adapter } from '@/domain/system/systemAdapter'
+import { nodeZoom_Adapter } from '@/figmaPluginUtils/utilAdapter'
 
 export default function () {
 	mainUser_Adapter()
@@ -24,6 +25,11 @@ export default function () {
 	selectMainCurrentSection_Adapter()
 	mainPub_Adapter()
 	//on 이벤트들은 중첩 됨
+
+	// 유틸
+	nodeZoom_Adapter()
+
+	// 임시
 
 	signalOnCurrentSection('SIGNAL_currentSection', (key) => {
 		//임시 처리

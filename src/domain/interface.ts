@@ -113,7 +113,7 @@ export const createDataHandlers = <K extends DuplexKeysType>() => ({
 export const memoHandlers = createDataHandlers<'memos'>()
 export const sectionHandlers = createDataHandlers<'section'>()
 sectionHandlers.dataOn('DATA_section', (section) => {
-	console.log(section)
+	console.log('DATA_section', section)
 })
 
 /**

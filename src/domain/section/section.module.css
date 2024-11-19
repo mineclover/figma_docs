@@ -84,6 +84,9 @@
 		color: var(--figma-color-bg-brand);
 		white-space: nowrap;
 		font-weight: 700;
+		max-width: 100%;
+		overflow: hidden;
+		text-overflow: ellipsis;
 	}
 }
 .wrapper {

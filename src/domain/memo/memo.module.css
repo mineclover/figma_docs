@@ -54,6 +54,32 @@
 	}
 }
 
+b {
+	font-weight: 700;
+	color: var(--figma-color-text-brand);
+}
+
+.close {
+	display: flex;
+	flex-direction: row;
+	width: 100%;
+	align-items: center;
+	justify-content: space-between;
+
+	padding-left: 8px;
+
+	.title {
+		font-size: 12px;
+		font-weight: 700;
+	}
+
+	.icon {
+		&:hover {
+			background-color: var(--figma-color-bg-danger);
+		}
+	}
+}
+
 .modal {
 	display: grid;
 
@@ -61,7 +87,7 @@
 	column-gap: 8px;
 
 	padding: 8px;
-	margin-inline: 8px;
+	margin: 8px;
 	background-color: var(--figma-color-bg);
 	border-radius: 8px;
 
@@ -72,7 +98,6 @@
 
 	.header {
 		grid-area: header;
-		font-weight: 700;
 	}
 	.divider {
 		grid-area: divider;
@@ -119,6 +144,8 @@
 }
 
 .add {
+	width: fit-content;
+	height: fit-content;
 	grid-template-columns: 2fr 1fr 1fr;
 	grid-template-areas:
 		'section section section'
@@ -158,4 +185,42 @@
 		/* background-color: var(--figma-color-bg-inverse); */
 		/* color: var(--figma-color-text-oninverse); */
 	}
+}
+
+.column {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
+.component {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	padding: 4px;
+	background-color: var(--figma-color-bg);
+	border-radius: 4px;
+}
+
+.row {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 4px;
+}
+.flexGrow {
+	flex-grow: 1;
+}
+
+.flexShrink {
+	flex-shrink: 0;
+}
+
+.componentAdd {
+	border: 1px solid var(--figma-color-border);
+}
+
+.addModal {
+	height: 100%;
+	overflow: auto;
 }

@@ -62,7 +62,7 @@ function CategoryPage() {
 
 		signalEmit('SIGNAL_pub')
 	}, [selectedCategory])
-	console.log(memos)
+	console.log('memos', memos)
 
 	return (
 		<div>
@@ -134,7 +134,7 @@ function CategoryPage() {
 								handleCategoryClick(key)
 							}}
 							onContextMenu={(e) => {
-								console.log(e)
+								console.log('Category onContextMenu', e)
 								addLayer(RemoveCategoryKey, <CategoryModal.RemoveModal target={key} />)
 							}}
 						>

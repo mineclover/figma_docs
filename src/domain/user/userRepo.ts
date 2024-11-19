@@ -1,11 +1,7 @@
-import { generateRandomText2 } from '@/utils/textTools'
-import { constant, prefix } from '@/domain/interface'
+import { constant } from '@/domain/interface'
 import { FigmaUser, Users } from '@/domain/types'
 import { publish } from '../system/sysyemRepo'
-
-const generateUUID = () => {
-	return prefix['user'] + generateRandomText2()
-}
+import { generateUUID } from '../interfaceBuilder'
 
 export const getAllUser = () => {
 	const before = figma.root.getPluginData(constant.allUser)

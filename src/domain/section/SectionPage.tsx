@@ -51,6 +51,8 @@ const SectionItem = ({ pageId, id, name, type, alias }: CurrentSectionInfo & Pro
 	)
 }
 
+// pageId 는 상위 요소를 줌 하기 위해 제공했음
+
 export const SectionPath = ({
 	pageId,
 	currentSection,
@@ -62,9 +64,39 @@ export const SectionPath = ({
 			{currentSection.map((section, index) => {
 				const context = section.alias === '' ? section.name : section.alias
 				const isLast = index === currentSection.length - 1
-				console.log(section)
+				const isFirst = index === 0
+
 				if (section.type === 'SELECTED') {
-					return <span className={styles.selected}>{context}</span>
+					return null
+				}
+				return (
+					<Fragment key={section.id}>
+						{!isFirst && <span>/</span>}
+						<span className={styles.content}>{context}</span>
+					</Fragment>
+				)
+			})}
+		</div>
+	)
+}
+
+export const NodePath = ({
+	pageId,
+	currentSection,
+	className,
+}: { pageId: string; currentSection: CurrentSectionInfo[]; className?: string } & Props) => {
+	return (
+		<div className={clc(styles.currentWrapper, className)}>
+			{currentSection.map((section, index) => {
+				const context = section.alias === '' ? section.name : section.alias
+				const isLast = index === currentSection.length - 1
+
+				if (isLast) {
+					return (
+						<span key={section.id} className={styles.selected}>
+							{context}
+						</span>
+					)
 				}
 				return (
 					<Fragment key={section.id}>

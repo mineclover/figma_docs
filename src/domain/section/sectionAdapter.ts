@@ -9,7 +9,7 @@ import {
 	setSectionListModel,
 	setSectionModel,
 	getAllSectionListModel,
-	getCurrentSelection,
+	getOneCurrentSelection,
 	getCurrentSectionModel,
 	setCurrentSectionModel,
 } from './sectionRepo'
@@ -108,12 +108,14 @@ export const selectMainCurrentSection_Adapter = () => {
 
 /** 선택 노드 기준 섹션 조회 */
 export const selectMainCurrentSection = () => {
-	const node = getCurrentSelection()
+	const node = getOneCurrentSelection()
 	if (node) {
 		const section = getCurrentSectionModel(node)
 		if (section) {
 			dataEmitCurrentSection('DATA_currentSection', section)
 		}
+	} else {
+		pageMainCurrentSection_Adapter()
 	}
 }
 

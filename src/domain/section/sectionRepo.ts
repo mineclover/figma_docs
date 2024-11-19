@@ -57,11 +57,13 @@ export const getSectionListModel = (list: SectionList) => {
 	return sectionList
 }
 
-export const getCurrentSelection = () => {
+/** 하나의 노드만 선택되었을 때 */
+export const getOneCurrentSelection = () => {
 	if (figma.currentPage.selection.length === 1) {
 		const node = figma.currentPage.selection[0]
 		return node
 	}
+
 	return null
 }
 
@@ -74,7 +76,7 @@ export const getCurrentSectionModel = (node: BaseNode) => {
 		const paths = FilePathNodeSearch(node)
 		const sectionInfo: CurrentSectionInfo[] = paths.map((node) => {
 			const isPathNode = linkPathNodeType.includes(node.type as (typeof linkPathNodeType)[number])
-			console.log(node, node.type, linkPathNodeType, isPathNode)
+			console.log('getCurrentSectionModel map', node, node.type, linkPathNodeType, isPathNode)
 			// 섹션 구성에 컴포넌트를 저장하려할 때
 
 			return {

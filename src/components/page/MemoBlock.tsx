@@ -1,11 +1,6 @@
 import { h } from 'preact'
-import { useSignal } from '@/hooks/useSignal'
-import { useEffect, useState } from 'preact/hooks'
-
-import { DuplexDataHandler, prefix } from '../../domain/interface'
 import { CurrentSectionInfo, Memo, SectionList } from '../../domain/types'
-import { hotTopic } from '../../domain/category/categoryModel'
-import PinIcon from '@/icon/PinIcon'
+
 import GithubIcon from '@/icon/GithubIcon'
 import NotionIcon from '@/icon/NotionIcon'
 import FigmaIcon from '@/icon/FigmaIcon'
