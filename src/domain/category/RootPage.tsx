@@ -15,7 +15,7 @@ import PlusIcon from '@/icon/PlusIcon'
 import CategoryModal, { AddCategoryKey, RemoveCategoryKey } from './CategoryModal'
 import SettingIcon from '@/icon/SettingIcon'
 import Setting from '@/components/page/Setting'
-import MemoModal from '../memo/MemoModal'
+import MemoModal, { AddMemoKey } from '../memo/MemoModal'
 import MemoPage from '../memo/MemoPage'
 import { memosAtom } from '../memo/memoModel'
 import { memoListAtom } from '../memo/memoModel'
@@ -119,7 +119,7 @@ function CategoryPage() {
 								className={styles.menu}
 								key={key}
 								onClick={() => {
-									addLayer(AddCategoryKey, <MemoModal.AddModal />)
+									addLayer(AddMemoKey, <MemoModal.AddModal />)
 								}}
 							>
 								<PlusIcon />

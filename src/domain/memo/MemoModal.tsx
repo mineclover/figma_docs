@@ -107,7 +107,8 @@ function AddMemoModal() {
 					} as AddMemoType
 
 					console.log('newMemo', { [memoKey]: newMemo })
-					// dataMemosEmit('DATA_memos', { [memoKey]: newMemo })
+					dataMemosEmit('DATA_memos', { [memoKey]: newMemo })
+					deleteLayer(AddMemoKey)
 				}}
 			>
 				<span className={styles.header}>
