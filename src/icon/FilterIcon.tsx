@@ -1,6 +1,6 @@
 import { h } from 'preact'
 
-const FilterIcon = ({ size = 24, color = '#5F6368', ...props }) => {
+const FilterIcon = ({ size = 16, color = 'var(--figma-color-icon)', ...props }) => {
 	return (
 		<svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" {...props}>
 			<path

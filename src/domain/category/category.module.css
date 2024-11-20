@@ -6,6 +6,35 @@
 	gap: 4px;
 }
 
+.header {
+	display: flex;
+	width: 100%;
+	overflow: hidden;
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-between;
+	padding: 4px;
+	.mainTitle {
+		flex-grow: 1;
+		font-weight: 700;
+		text-align: center;
+	}
+	.icon {
+		flex-shrink: 0;
+		width: 24px;
+		height: 24px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		&:hover {
+			background-color: var(--figma-color-bg-brand-hover);
+		}
+		svg {
+			margin: -8px;
+		}
+	}
+}
+
 .tab,
 .setting,
 .fix {

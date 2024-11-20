@@ -1,3 +1,8 @@
+.wrapper {
+	padding: 8px;
+	width: 100%;
+}
+
 .sectionItem {
 	display: grid;
 	/* grid-template-areas:
@@ -5,6 +10,7 @@
 		'name name button'
 		'alias alias button'; */
 
+	width: 100%;
 	grid-template-areas:
 		'type name button'
 		'alias alias button';
@@ -33,6 +39,9 @@
 	grid-area: name;
 	white-space: nowrap;
 	font-weight: 700;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
 }
 
 .aliasArea {
@@ -82,13 +91,10 @@
 	}
 	.selected {
 		color: var(--figma-color-bg-brand);
-		white-space: nowrap;
 		font-weight: 700;
 		max-width: 100%;
 		overflow: hidden;
+		white-space: nowrap;
 		text-overflow: ellipsis;
 	}
-}
-.wrapper {
-	padding: 8px;
 }

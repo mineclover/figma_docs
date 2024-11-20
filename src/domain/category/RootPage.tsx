@@ -6,7 +6,7 @@ import { DuplexDataHandler, prefix, signalEmit } from '../interface'
 import { CurrentSectionInfo, Memo, Memos, SectionList } from '../types'
 import { categoryAtom, currentCategoryAtom, hotTopic } from './categoryModel'
 import { addLayer } from '@/components/modal/Modal'
-import SectionPage from '../section/SectionPage'
+import SectionPage, { SectionPath } from '../section/SectionPage'
 
 import styles from './category.module.css'
 import { clc } from '@/components/modal/utils'
@@ -19,6 +19,10 @@ import MemoModal, { AddMemoKey } from '../memo/MemoModal'
 import MemoPage from '../memo/MemoPage'
 import { memosAtom } from '../memo/memoModel'
 import { memoListAtom } from '../memo/memoModel'
+import { IconArrowRight16, IconSearch32 } from '@create-figma-plugin/ui'
+import { IconArrowLeft16 } from '@create-figma-plugin/ui'
+import FilterIcon from '@/icon/FilterIcon'
+import { currentSectionAtom } from '../section/sectionModel'
 
 // 이름 추천 받아요
 
@@ -30,6 +34,11 @@ function CategoryPage() {
 	const category = useSignal(categoryAtom)
 	const selectedCategory = useSignal(currentCategoryAtom)
 	const all = Object.values(memos)
+
+	const currentSection = useSignal(currentSectionAtom)
+	const pageId = currentSection.filter((section) => section.type === 'PAGE')[0]?.id ?? ''
+
+	/** 카테고리에 값 추가 */
 	const other = Object.keys(category).reduce(
 		(acc, cur) => {
 			acc[cur] = all.filter((memo) => memo.category === cur) as Memo[]
@@ -38,6 +47,9 @@ function CategoryPage() {
 		{} as Record<string, Memo[]>
 	)
 
+	/** 조회된 전체 메모 리스트
+	 * fix 리스트는 현재 pin 리스트인데 따로 관리하기 때문에 아직 개발 안됨
+	 */
 	const allMemo = { ...other, all }
 
 	const setSelectedCategory = (category: string) => {
@@ -62,19 +74,33 @@ function CategoryPage() {
 
 		signalEmit('SIGNAL_pub')
 	}, [selectedCategory])
-	console.log('memos', memos)
+	console.log('memos', memos, allMemo)
 
 	return (
 		<div>
-			<header>
-				<button>
-					<SearchIcon></SearchIcon>
+			<header className={styles.header}>
+				{/* 히스토리 */}
+				{/* <button className={styles.icon}>
+					<IconArrowLeft16 />
 				</button>
-				<div>project name</div>
-				<div>카테고리 추가 버튼</div>
+				<button className={styles.icon}>
+					<IconArrowRight16 />
+				</button> */}
+				<SectionPath currentSection={currentSection} pageId={pageId} />
+				{/* <div className={styles.mainTitle}>project name</div> */}
+				{/* 검색 */}
+				{/* 필터링 */}
+				{/* <button className={styles.icon}>
+					<IconSearch32 />
+				</button>
+				<div className={styles.icon}>
+					<FilterIcon />
+				</div> */}
 			</header>
 			<aside className={styles.tabs}>
 				{Object.entries(menus).map(([key, value]) => {
+					const target = allMemo[key as keyof typeof allMemo] ?? []
+
 					const active = selectedCategory === key
 					if (key === 'fix')
 						return (
@@ -84,7 +110,7 @@ function CategoryPage() {
 								onClick={() => handleCategoryClick(key)}
 							>
 								{key}
-								<div className={clc(styles.badge, styles.pinned)}>123</div>
+								<div className={clc(styles.badge, styles.pinned)}>{target.length}</div>
 							</button>
 						)
 
@@ -113,19 +139,6 @@ function CategoryPage() {
 							</button>
 						)
 
-					if (key === 'add')
-						return (
-							<button
-								className={styles.menu}
-								key={key}
-								onClick={() => {
-									addLayer(AddMemoKey, <MemoModal.AddModal />)
-								}}
-							>
-								<PlusIcon />
-							</button>
-						)
-
 					return (
 						<button
 							className={clc(styles.tab, active && styles.active)}
@@ -138,7 +151,7 @@ function CategoryPage() {
 								addLayer(RemoveCategoryKey, <CategoryModal.RemoveModal target={key} />)
 							}}
 						>
-							<div className={clc(styles.badge, styles.normal)}>123</div>
+							<div className={clc(styles.badge, styles.normal)}>{target.length}</div>
 							{key}
 						</button>
 					)
@@ -147,11 +160,14 @@ function CategoryPage() {
 			</aside>
 
 			<main>
-				<div>{menus[selectedCategory as keyof typeof menus]}</div>
 				{selectedCategory === 'setting' ? (
 					<Setting />
 				) : (
-					<MemoPage memos={allMemo[selectedCategory as keyof typeof allMemo]} />
+					<MemoPage
+						memos={allMemo[selectedCategory as keyof typeof allMemo]}
+						categoryName={selectedCategory}
+						categoryValue={menus[selectedCategory as keyof typeof menus]}
+					/>
 				)}
 			</main>
 			<button

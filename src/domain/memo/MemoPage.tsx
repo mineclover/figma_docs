@@ -7,7 +7,7 @@ import { Memo, MemoCategoryList, MemoList } from '../types'
 
 import { useSignal } from '@/hooks/useSignal'
 import { clc } from '@/components/modal/utils'
-import { deleteLayer } from '@/components/modal/Modal'
+import { addLayer, deleteLayer } from '@/components/modal/Modal'
 import { memoAtom, memoListAtom, memosAtom } from './memoModel'
 import { dataMemoEmit, dataMemosEmit } from './memoAdapter'
 import { SectionPath } from '../section/SectionPage'
@@ -20,8 +20,19 @@ import { componentKeyBuilder } from '../interfaceBuilder'
 import { getSectionKey } from '../section/sectionRepo'
 import { userAtom } from '../user/userModel'
 import MemoBlock from '@/components/page/MemoBlock'
+import PlusIcon from '@/icon/PlusIcon'
+import MemoModal, { AddMemoKey } from './MemoModal'
+import { IconPlus32 } from '@create-figma-plugin/ui'
 
-function MemoPage({ memos }: { memos?: Memo[] }) {
+function MemoPage({
+	memos,
+	categoryName,
+	categoryValue,
+}: {
+	memos?: Memo[]
+	categoryName: string
+	categoryValue: string
+}) {
 	const selectedCategory = useSignal(currentCategoryAtom)
 	const currentUser = useSignal(userAtom)
 	const [memoKey, setMemoKey] = useState<string>(generateMemoKey())
@@ -39,7 +50,28 @@ function MemoPage({ memos }: { memos?: Memo[] }) {
 		return <MemoBlock memoKey={item.key} {...item} />
 	})
 
-	return <div>{test}</div>
+	return (
+		<div>
+			<div className={styles.top}>
+				{categoryName !== 'fix' && (
+					<div className={styles.info}>
+						<span className={styles.name}>{categoryName}</span>
+						<span>{categoryValue}</span>
+					</div>
+				)}
+				<button
+					className={styles.menu}
+					onClick={() => {
+						addLayer(AddMemoKey, <MemoModal.AddModal />)
+					}}
+				>
+					<IconPlus32 />
+				</button>
+			</div>
+
+			{test}
+		</div>
+	)
 }
 
 export default MemoPage

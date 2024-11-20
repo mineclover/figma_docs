@@ -4,10 +4,10 @@ import { MemoCategoryList } from '../types'
 import { getUserModel } from '../user/userRepo'
 
 const DefaultCategory: MemoCategoryList = {
-	Plan: '기획 문서나 버전 관련 변경 내역, 작업 히스토리',
-	Design: '디자인 문서나 버전 관련 변경 내역, 작업 히스토리',
-	Develop: '개발 문서나 버전 관련 변경 내역, 작업 히스토리',
-	Resource: '관련  자료들의 저장 위치',
+	Plan: '기획이나 레퍼런스',
+	Design: '디자인 관련',
+	Develop: '개발 내역',
+	Resource: '저장 위치',
 	Deploy: '서비스 실제 배포 위치',
 }
 
