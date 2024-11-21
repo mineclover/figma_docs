@@ -18,8 +18,7 @@ type FunctionAtomProps = {
 // 데이터 삭제 객체 내에서 이벤트 핸들러 객체 싱글톤으로 구성
 // 이벤트 전파 최소화 목적의 모듈화
 
-/** 이 시간은 애니메이션 시간 두배로 */
-export const closeMs = 300
+export const closeMs = 150
 
 const layerAtom = signal<Record<string, JSXModal>>({})
 const sortAtom = signal<string[]>([])

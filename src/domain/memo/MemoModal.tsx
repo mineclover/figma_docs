@@ -27,6 +27,7 @@ import { userAtom } from '../user/userModel'
 import { NodeZoomHandler } from '@/figmaPluginUtils/types'
 import { emit } from '@create-figma-plugin/utilities'
 import { IconCross32, IconPlus32, IconTarget16, IconTarget32, IconTrash32 } from '@create-figma-plugin/ui'
+import { MemoBlockProps } from '@/components/page/MemoBlock'
 
 const ComponentKeyButton = ({
 	component,
@@ -183,28 +184,38 @@ function AddMemoModal() {
 export const AddMemoKey = 'AddMemoKey'
 export const RemoveMemoKey = 'RemoveMemoKey'
 
-function RemoveMemoModal({ target }: { target: string }) {
-	const memo = useSignal<Memo>(memoAtom)
-
+export const OptionModal = ({ memoKey: key, title }: MemoBlockProps) => {
 	return (
-		<form
-			className={clc(styles.modal, styles.remove)}
-			onSubmit={(e) => {
-				e.preventDefault()
+		<div>
+			<span>asdf 모달 테스트 테스트</span>
+		</div>
+	)
+}
 
-				const newMemo = { ...memo }
-
-				dataMemoEmit('DATA_memo', newMemo)
-				deleteLayer(RemoveMemoKey)
-			}}
-		>
+const RemoveMemoModal = ({ memoKey: key, title }: MemoBlockProps) => {
+	return (
+		<div className={clc(styles.modal, styles.remove)}>
 			<span className={styles.header}>메모 삭제</span>
 			<div className={styles.main}>
 				<span className={styles.sub}>메모 내용: </span>
-				<span className={styles.text}>{target}</span>
+				<span className={styles.text}>{title}</span>
 			</div>
-			<button className={styles.delete}>삭제 확인</button>
-		</form>
+			<button
+				className={styles.delete}
+				onClick={() => {
+					// @ts-ignore
+					dataMemosEmit('DATA_memos', {
+						[key]: {
+							key: '',
+						},
+					})
+
+					deleteLayer(RemoveMemoKey)
+				}}
+			>
+				삭제 확인
+			</button>
+		</div>
 	)
 }
 

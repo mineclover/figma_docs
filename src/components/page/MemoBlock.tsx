@@ -7,10 +7,19 @@ import FigmaIcon from '@/icon/FigmaIcon'
 import LinkIcon from '@/icon/LinkIcon'
 import { dataMemosEmit } from '@/domain/memo/memoAdapter'
 import styles from './memoBlock.module.css'
-import { IconHyperlinkLinked32, IconLayerComponent16, IconTarget32, IconTrash32 } from '@create-figma-plugin/ui'
+import {
+	IconEllipsis32,
+	IconHyperlinkLinked32,
+	IconLayerComponent16,
+	IconTarget32,
+	IconTrash32,
+} from '@create-figma-plugin/ui'
 import { componentKeyParser } from '@/domain/interfaceBuilder'
 import { NodeZoomHandler } from '@/figmaPluginUtils/types'
 import { emit } from '@create-figma-plugin/utilities'
+import { addLayer } from '../modal/Modal'
+import DiagonalClientModal from '../modal/DiagonalClientModal'
+import { OptionModal } from '@/domain/memo/MemoModal'
 
 type LinkType = 'figma' | 'notion' | 'github' | 'github code' | 'unknown'
 
@@ -49,7 +58,6 @@ type CurrentMemoPageProps = {
 const linkSwitch = (link: string) => {
 	console.log('link,', link)
 	if (link.startsWith('https://www.figma.com/design/')) {
-		return 'figma'
 	}
 
 	if (link.startsWith('https://www.notion.so/')) {
@@ -82,14 +90,9 @@ const ComponentLink = ({ componentLink }: { componentLink: string }) => {
 	)
 }
 
-const CurrentMemoPage = ({
-	memoKey: key,
-	title,
-	url,
-	category,
-	componentLink,
-	...props
-}: Memo & { memoKey: string }) => {
+export type MemoBlockProps = Memo & { memoKey: string }
+
+const CurrentMemoPage = ({ memoKey: key, title, url, category, componentLink, ...props }: MemoBlockProps) => {
 	// 섹션 정보 얻고
 
 	console.log(key, title, 'url::', url, category, props)
@@ -126,8 +129,30 @@ const CurrentMemoPage = ({
 					</div>
 				</div>
 			</div>
-			<button className={styles.delete}>
-				<IconTrash32 />
+			<button
+				className={styles.link}
+				onClick={(e) => {
+					addLayer(
+						'asdf',
+						<DiagonalClientModal target={e.currentTarget as HTMLButtonElement & string} offset={0} axis="leftTop">
+							<OptionModal
+								memoKey={key}
+								title={title}
+								url={url}
+								category={category}
+								componentLink={componentLink}
+								{...props}
+							/>
+						</DiagonalClientModal>,
+						{
+							style: {
+								background: 'transparent',
+							},
+						}
+					)
+				}}
+			>
+				<IconEllipsis32 />
 			</button>
 		</article>
 	)
