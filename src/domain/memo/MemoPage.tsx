@@ -12,7 +12,7 @@ import { memoAtom, memoListAtom, memosAtom } from './memoModel'
 import { dataMemoEmit, dataMemosEmit } from './memoAdapter'
 import { SectionPath } from '../section/SectionPage'
 import { currentSectionAtom } from '../section/sectionModel'
-import { currentCategoryAtom } from '../category/categoryModel'
+import { currentCategoryAtom, hotTopic } from '../category/categoryModel'
 import { AddMemoType } from '../utils/featureType'
 import { selectedType, signalEmit } from '../interface'
 import { generateMemoKey } from '../interfaceBuilder'
@@ -23,6 +23,8 @@ import MemoBlock from '@/components/page/MemoBlock'
 import PlusIcon from '@/icon/PlusIcon'
 import MemoModal, { AddMemoKey } from './MemoModal'
 import { IconPlus32 } from '@create-figma-plugin/ui'
+
+const options = Object.keys(hotTopic)
 
 function MemoPage({
 	memos,
@@ -45,31 +47,32 @@ function MemoPage({
 
 	if (!memos) return null
 
-	const test = memos.map((item) => {
+	const memoList = memos.map((item) => {
 		console.log('memoPage:', item)
 		return <MemoBlock memoKey={item.key} {...item} />
 	})
 
 	return (
 		<div>
-			<div className={styles.top}>
-				{categoryName !== 'fix' && (
+			{!options.includes(categoryName) && (
+				<div className={styles.top}>
 					<div className={styles.info}>
 						<span className={styles.name}>{categoryName}</span>
 						<span>{categoryValue}</span>
 					</div>
-				)}
-				<button
-					className={styles.menu}
-					onClick={() => {
-						addLayer(AddMemoKey, <MemoModal.AddModal />)
-					}}
-				>
-					<IconPlus32 />
-				</button>
-			</div>
 
-			{test}
+					<button
+						className={styles.menu}
+						onClick={() => {
+							addLayer(AddMemoKey, <MemoModal.AddModal />)
+						}}
+					>
+						<IconPlus32 />
+					</button>
+				</div>
+			)}
+
+			{memoList}
 		</div>
 	)
 }

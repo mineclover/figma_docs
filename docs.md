@@ -125,7 +125,8 @@ main 또는 ui 를 위한 인터페이스를 만들고
 ## Service
 
 - 핵심 비즈니스 로직 구현
-- 트랜잭션 처리
+- 트랜잭션 처리 ... 였으나 page에서는 state를 어뎁터에서 핸들링하고 바로처리하다보니 유명 무실해짐
+  - 만약 ui나 기타에서 데이터 처리 일부를 서비스 레이어로 분리하게 되면 쓰기 좋을 것 같음
 - [Repository](#repository) 와 [Adapter](#adapter) 조합
 
 ## Repository

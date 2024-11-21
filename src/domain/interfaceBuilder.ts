@@ -2,6 +2,7 @@ import { generateRandomText2 } from '@/utils/textTools'
 import { prefix, selectedType, splitSymbol } from './interface'
 import { CurrentSectionInfo } from './types'
 
+/** 컴포넌트 키 추출 */
 export const getCurrentSectionToComponentKey = (
 	currentSection: CurrentSectionInfo[],
 	type: 'section' | 'page' | 'node'
@@ -39,6 +40,7 @@ export const getCurrentSectionToComponentKey = (
 	return null
 }
 
+/** 섹션 명으로 쓸 이름 추출 */
 export const getCurrentSectionToComponentName = (
 	currentSection: CurrentSectionInfo[],
 	type: 'section' | 'page' | 'node'

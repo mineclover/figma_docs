@@ -56,6 +56,8 @@ export const setMemoModel = (key: MEMO_KEY, memo: Memo | AddMemoType | NullMemo)
 	const currentSection = currentMemo === '' ? [] : (currentMemo.sectionBackLink ?? [])
 	// 메모..
 
+	const isAdd = currentMemo === ''
+
 	// 추가를 위한 키 발급은 클라에서 랜덤 키 얻어서 감싸보내주기
 	// 값 없는 것들은 기존에 없으면 생성 있으면 읽어옴
 	// 메인에서 처리되는 건 동일하게 구성
@@ -65,6 +67,7 @@ export const setMemoModel = (key: MEMO_KEY, memo: Memo | AddMemoType | NullMemo)
 	// uuid 얻어오고
 	// 이미 메모가 있으면 create는 기존 데이터 값 사용
 	// modified는 현재 시간 사용
+
 	// writer는 현재 유저 사용
 
 	// 나머지 값은 새 값 기준으로 덮어씌움
@@ -74,7 +77,13 @@ export const setMemoModel = (key: MEMO_KEY, memo: Memo | AddMemoType | NullMemo)
 	// if (memoCheck(memo) && memo.sectionBackLink && memo.sectionBackLink.length > 0) {
 	if (memoCheck(memo)) {
 		const removedSections = currentSection.filter((section) => !memo.sectionBackLink.includes(section))
-		figma.root.setPluginData(key, JSON.stringify(memo))
+
+		const time = new Date().getTime().toString()
+		const created = isAdd ? time : currentMemo.created
+		const modified = time
+
+		figma.root.setPluginData(key, JSON.stringify({ ...memo, created, modified }))
+
 		setMemoListModel([key], 'add')
 		publish({
 			memos: [key],

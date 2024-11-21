@@ -6,6 +6,11 @@ import NotionIcon from '@/icon/NotionIcon'
 import FigmaIcon from '@/icon/FigmaIcon'
 import LinkIcon from '@/icon/LinkIcon'
 import { dataMemosEmit } from '@/domain/memo/memoAdapter'
+import styles from './memoBlock.module.css'
+import { IconHyperlinkLinked32, IconLayerComponent16, IconTarget32, IconTrash32 } from '@create-figma-plugin/ui'
+import { componentKeyParser } from '@/domain/interfaceBuilder'
+import { NodeZoomHandler } from '@/figmaPluginUtils/types'
+import { emit } from '@create-figma-plugin/utilities'
 
 type LinkType = 'figma' | 'notion' | 'github' | 'github code' | 'unknown'
 
@@ -66,7 +71,25 @@ const linkObject = (type: string, url: string) => {
 	return null
 }
 
-function CurrentMemoPage({ memoKey: key, title, url, category, ...props }: Memo & { memoKey: string }) {
+const ComponentLink = ({ componentLink }: { componentLink: string }) => {
+	const parsed = componentKeyParser(componentLink)
+	if (!parsed) return null
+	const { pageId, nodeId } = parsed
+	return (
+		<button className={styles.component} onClick={() => emit<NodeZoomHandler>('NODE_ZOOM', { pageId, nodeId })}>
+			<IconLayerComponent16 />
+		</button>
+	)
+}
+
+const CurrentMemoPage = ({
+	memoKey: key,
+	title,
+	url,
+	category,
+	componentLink,
+	...props
+}: Memo & { memoKey: string }) => {
 	// 섹션 정보 얻고
 
 	console.log(key, title, 'url::', url, category, props)
@@ -77,27 +100,35 @@ function CurrentMemoPage({ memoKey: key, title, url, category, ...props }: Memo 
 	const type = linkInfo ? linkInfo.type : linkType
 
 	return (
-		<article>
+		<article className={styles.memoBlock}>
 			<button
+				className={styles.link}
 				onClick={() => {
 					// remove
-					// @ts-ignore
-					dataMemosEmit('DATA_memos', {
-						[key]: {
-							key: '',
-						},
-					})
+					window.open(url, '_blank')
 				}}
 			>
 				{type === 'github' && <GithubIcon />}
 				{type === 'github code' && <GithubIcon />}
 				{type === 'notion' && <NotionIcon />}
 				{type === 'figma' && <FigmaIcon />}
-				{type === 'unknown' && <LinkIcon />}
+				{type === 'unknown' && <IconHyperlinkLinked32 />}
 			</button>
-			<span>{category}</span>
-			<span>{title}</span>
-			<span>{JSON.stringify(props)}</span>
+			<div className={styles.wrapper}>
+				<div className={styles.top}>
+					<span className={styles.title}>{title}</span>
+				</div>
+				<div className={styles.bottom}>
+					<div className={styles.componentLink}>
+						{componentLink.map((item) => (
+							<ComponentLink componentLink={item} />
+						))}
+					</div>
+				</div>
+			</div>
+			<button className={styles.delete}>
+				<IconTrash32 />
+			</button>
 		</article>
 	)
 }

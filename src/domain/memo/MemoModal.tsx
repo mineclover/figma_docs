@@ -33,6 +33,7 @@ const ComponentKeyButton = ({
 	useSelectedComponent,
 }: {
 	component: [string, string]
+	/** 컴포넌트 선택 상태 관리 때문에 */
 	useSelectedComponent: [Map<string, string>, Dispatch<StateUpdater<Map<string, string>>>]
 }) => {
 	const [selectedComponent, setSelectedComponent] = useSelectedComponent
@@ -95,6 +96,10 @@ function AddMemoModal() {
 						'currentSection',
 						currentSection.filter((section) => section.type === selectedType)
 					)
+
+					/** 추가할 때 선택한 컴포넌트는 첫번째로 등록 */
+					const componentKey = getCurrentSectionToComponentKey(currentSection, 'node')
+
 					const newMemo = {
 						key: memoKey,
 						url: inputUrl,
@@ -103,7 +108,9 @@ function AddMemoModal() {
 						category: selectedCategory,
 						writer: currentUser.uuid,
 						sectionBackLink: [getSectionKey(currentSection, 'section')],
-						componentLink: [...selectedComponent.keys()],
+						componentLink: [componentKey, ...selectedComponent.keys()].filter(
+							(i, index, self) => self.indexOf(i) === index
+						),
 					} as AddMemoType
 
 					console.log('newMemo', { [memoKey]: newMemo })

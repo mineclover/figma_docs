@@ -1,0 +1,50 @@
+.memoBlock {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	width: 100%;
+}
+
+.wrapper {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	width: 100%;
+}
+
+.top {
+	display: flex;
+	flex-direction: row;
+}
+.title {
+	text-align: left;
+}
+.bottom {
+	display: flex;
+	flex-direction: row;
+}
+
+.link {
+	border-radius: 4px;
+	&:hover {
+		background-color: var(--figma-color-bg-brand);
+	}
+}
+
+.componentLink {
+	display: flex;
+	flex-direction: row;
+	gap: 4px;
+}
+
+.component {
+	&:hover {
+		background-color: var(--figma-color-bg-component);
+	}
+}
+
+.delete {
+	&:hover {
+		background-color: var(--figma-color-bg-danger);
+	}
+}
