@@ -1,12 +1,26 @@
-# 필독
+# 에셋 정리
 
-- [히스토리](history.md)에 자세한 변경 사항 기록할 것
+[아이콘 스토리북](https://yuanqing.github.io/create-figma-plugin/storybook/?path=/story/icons-size-8--control-chevron-down)
+Layer 로 시작하는거 많이 쓸 것 같음
+
+[css 참고](https://www.figma.com/plugin-docs/css-variables/)
+
+# 컨벤션
+
+- [히스토리](history.md)에 변경 사항 기록하기
 - adapter 가 단순한 것은 의도 됨
 - payload action 등을 통해 복잡하게 구성할 수도 있지만 그러지 않도록 데이터를 파편화하는 것을 전재로 함
 
 # 기능 추가 주제
 
 주제로 설계 해보고 적합한지 판단
+
+## UI 선택지
+
+- 카테고리 탭바 말고 셀렉트를 주는 건 어떤가
+  - 카테고리 탭바는 너무 길어서 셀렉트를 주는 걸로 해보는 것도 좋을 것 같음
+- 제목 구간 접기
+  - 너무 기니까 접어두고 필요하면 펼쳐 보는 이야기
 
 ## 컴포넌트 메모 관리
 
@@ -55,11 +69,6 @@
     - 메모 뷰어 ui를 보고 선택해야할 것 같음
 
 # 기능 정의
-
-## 라이브러리 아이콘
-
-[아이콘 스토리북](https://yuanqing.github.io/create-figma-plugin/storybook/?path=/story/icons-size-8--control-chevron-down)
-Layer 로 시작한느거 많이 쓸 것 같음
 
 ## 필터 기능
 

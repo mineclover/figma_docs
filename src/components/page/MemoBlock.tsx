@@ -57,7 +57,9 @@ type CurrentMemoPageProps = {
 
 const linkSwitch = (link: string) => {
 	console.log('link,', link)
+
 	if (link.startsWith('https://www.figma.com/design/')) {
+		return 'figma'
 	}
 
 	if (link.startsWith('https://www.notion.so/')) {

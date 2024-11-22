@@ -7,7 +7,7 @@ import { Memo, MemoCategoryList } from '../types'
 
 import { useSignal } from '@/hooks/useSignal'
 import { clc } from '@/components/modal/utils'
-import { deleteLayer } from '@/components/modal/Modal'
+import { addLayer, deleteLayer } from '@/components/modal/Modal'
 import { memoAtom } from './memoModel'
 import { dataMemoEmit, dataMemosEmit } from './memoAdapter'
 import { NodePath, SectionPath } from '../section/SectionPage'
@@ -184,15 +184,27 @@ function AddMemoModal() {
 export const AddMemoKey = 'AddMemoKey'
 export const RemoveMemoKey = 'RemoveMemoKey'
 
-export const OptionModal = ({ memoKey: key, title }: MemoBlockProps) => {
+export const OptionModal = (props: MemoBlockProps) => {
+	const { memoKey: key, writer, title, description } = props
+	const user = useSignal(userAtom)
+
+	if (writer !== user.uuid) return <div>작성자만 수정 가능</div>
+
 	return (
-		<div>
-			<span>asdf 모달 테스트 테스트</span>
+		<div className={styles.more}>
+			<span>제목: {title}</span>
+			<span> {description}</span>
+			{/* <button>이동</button> */}
+			{/* <button onClick={() => deleteLayer(AddMemoKey)}>상세정보</button> */}
+			{/* <button onClick={() => deleteLayer(AddMemoKey)}>수정</button> */}
+			<button className={styles.button} onClick={() => addLayer(RemoveMemoKey, <RemoveMemoModal {...props} />)}>
+				삭제
+			</button>
 		</div>
 	)
 }
 
-const RemoveMemoModal = ({ memoKey: key, title }: MemoBlockProps) => {
+const RemoveMemoModal = ({ memoKey: key, title, ...props }: MemoBlockProps) => {
 	return (
 		<div className={clc(styles.modal, styles.remove)}>
 			<span className={styles.header}>메모 삭제</span>

@@ -8,19 +8,15 @@ import { Memo, MemoCategoryList, MemoList } from '../types'
 import { useSignal } from '@/hooks/useSignal'
 import { clc } from '@/components/modal/utils'
 import { addLayer, deleteLayer } from '@/components/modal/Modal'
-import { memoAtom, memoListAtom, memosAtom } from './memoModel'
-import { dataMemoEmit, dataMemosEmit } from './memoAdapter'
-import { SectionPath } from '../section/SectionPage'
+
 import { currentSectionAtom } from '../section/sectionModel'
 import { currentCategoryAtom, hotTopic } from '../category/categoryModel'
-import { AddMemoType } from '../utils/featureType'
+
 import { selectedType, signalEmit } from '../interface'
 import { generateMemoKey } from '../interfaceBuilder'
-import { componentKeyBuilder } from '../interfaceBuilder'
-import { getSectionKey } from '../section/sectionRepo'
 import { userAtom } from '../user/userModel'
 import MemoBlock from '@/components/page/MemoBlock'
-import PlusIcon from '@/icon/PlusIcon'
+
 import MemoModal, { AddMemoKey } from './MemoModal'
 import { IconPlus32 } from '@create-figma-plugin/ui'
 
@@ -53,12 +49,12 @@ function MemoPage({
 	})
 
 	return (
-		<div>
+		<div className={styles.memoBlocks}>
 			{!options.includes(categoryName) && (
 				<div className={styles.top}>
 					<div className={styles.info}>
 						<span className={styles.name}>{categoryName}</span>
-						<span>{categoryValue}</span>
+						<button className={styles.categoryValue}>{categoryValue}</button>
 					</div>
 
 					<button
