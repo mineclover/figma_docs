@@ -7,7 +7,7 @@ export const categoryAtom = signal<MemoCategoryList>({})
 export const currentCategoryAtom = signal<string>('fix')
 
 export const hotTopic = {
-	fix: '핀 고정 메뉴',
+	// fix: '핀 고정 메뉴',
 	// add: '메뉴 추가',
 	setting: '설정 창',
 	all: '전체 메뉴',

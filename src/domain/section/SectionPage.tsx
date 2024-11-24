@@ -1,14 +1,14 @@
 import { Fragment, h } from 'preact'
 import { useSignal } from '@/hooks/useSignal'
 import { useState } from 'preact/hooks'
-import { currentSectionAtom, sectionListAtom } from './sectionModel'
+import { currentSectionAtom, currentSectionFocusAtom, sectionListAtom } from './sectionModel'
 import { dataEmitCurrentSection, dataEmitList } from './sectionAdapter'
 import { CurrentSectionInfo, SectionList } from '../types'
 import { modalAlert } from '@/components/alert'
 import styles from './section.module.css'
 import { addLayer } from '@/components/modal/Modal'
 import { clc } from '@/components/modal/utils'
-import { getRootSection } from './sectionRepo'
+import { getRootSection, getSectionKey } from './sectionRepo'
 
 // 섹션 추가 삭제는 메모 추가 삭제에 의해 자연스럽게 발생하는 동작임
 type Props = {
@@ -63,11 +63,26 @@ export const SectionPath = ({
 	currentSection,
 	className,
 }: { pageId: string; currentSection: CurrentSectionInfo[]; className?: string } & Props) => {
-	const rootSection = getRootSection(currentSection)
+	const focusMode = useSignal(currentSectionFocusAtom)
+	const rootSection = focusMode === 'section' ? getRootSection(currentSection) : currentSection
+
+	// 포커스 모드에 따라 실제 데이터를 보여주는 것이 달라지게 하는 걸로
 
 	return (
 		<div className={clc(styles.currentWrapper, className)}>
-			<span className={styles.title}>현재 섹션</span>
+			<button
+				onClick={() => {
+					if (focusMode === 'section') {
+						currentSectionFocusAtom.value = 'page'
+					} else if (focusMode === 'page') {
+						currentSectionFocusAtom.value = 'section'
+					}
+				}}
+				className={styles.title}
+			>
+				{focusMode === 'section' && '현재 섹션:'}
+				{focusMode === 'page' && '현재 페이지:'}
+			</button>
 			{rootSection.map((section, index) => {
 				const context = section.alias === '' ? section.name : section.alias
 				const isLast = index === rootSection.length - 1
@@ -76,6 +91,11 @@ export const SectionPath = ({
 				if (section.type === 'SELECTED') {
 					return null
 				}
+				// 모드 호환 목적
+				if (focusMode === 'page' && section.type !== 'PAGE') {
+					return null
+				}
+
 				return (
 					<Fragment key={section.id}>
 						{!isFirst && <span>/</span>}

@@ -1,5 +1,5 @@
 import { signal } from '@preact/signals-core'
-import { Section, SectionList, MEMO_KEY, CurrentSectionInfo } from '../types'
+import { Section, SectionList, MEMO_KEY, CurrentSectionInfo, FocusModeType } from '../types'
 
 /**
  * 섹션 아이디 리스트 조회
@@ -26,3 +26,5 @@ export const hotTopicListAtom = signal<MEMO_KEY[]>([])
  * currentSection
  * */
 export const currentSectionAtom = signal<CurrentSectionInfo[]>([])
+
+export const currentSectionFocusAtom = signal<FocusModeType>('section')

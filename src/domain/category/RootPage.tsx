@@ -10,20 +10,18 @@ import SectionPage, { SectionPath } from '../section/SectionPage'
 
 import styles from './category.module.css'
 import { clc } from '@/components/modal/utils'
-import SearchIcon from '@/icon/SearchIcon'
-import PlusIcon from '@/icon/PlusIcon'
 import CategoryModal, { AddCategoryKey, RemoveCategoryKey } from './CategoryModal'
 import SettingIcon from '@/icon/SettingIcon'
 import Setting from '@/components/page/Setting'
-import MemoModal, { AddMemoKey } from '../memo/MemoModal'
+
 import MemoPage from '../memo/MemoPage'
 import { memosAtom } from '../memo/memoModel'
 import { memoListAtom } from '../memo/memoModel'
-import { IconArrowRight16, IconSearch32 } from '@create-figma-plugin/ui'
-import { IconArrowLeft16 } from '@create-figma-plugin/ui'
-import FilterIcon from '@/icon/FilterIcon'
-import { currentSectionAtom } from '../section/sectionModel'
+
+import { currentSectionAtom, currentSectionFocusAtom } from '../section/sectionModel'
 import { getSectionKey } from '../section/sectionRepo'
+
+import './root.css'
 
 // 이름 추천 받아요
 
@@ -34,10 +32,10 @@ function CategoryPage() {
 	const memoList = useSignal(memoListAtom)
 	const category = useSignal(categoryAtom)
 	const selectedCategory = useSignal(currentCategoryAtom)
+	const currentSection = useSignal(currentSectionAtom)
+	const focusMode = useSignal(currentSectionFocusAtom)
 
 	const all = Object.values(memos)
-
-	const currentSection = useSignal(currentSectionAtom)
 	const pageId = currentSection.filter((section) => section.type === 'PAGE')[0]?.id ?? ''
 
 	/** 카테고리에 값 추가 */
@@ -45,7 +43,8 @@ function CategoryPage() {
 		(acc, cur) => {
 			acc[cur] = all.filter((memo) => {
 				if (!(memo.category === cur)) return false
-				const rootSection = getSectionKey(currentSection, 'section')
+				const rootSection = getSectionKey(currentSection, focusMode)
+				console.log('rootSection,L49:', rootSection, focusMode, currentSection)
 				try {
 					const sectionBackLink = memo.sectionBackLink[0] ?? ''
 					if (sectionBackLink.startsWith(rootSection)) return true

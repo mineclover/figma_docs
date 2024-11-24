@@ -75,3 +75,7 @@ export type Pub = {
 	section: SectionID[]
 	users: FigmaUser['uuid'][]
 }
+
+export type FocusType = 'all' | 'page' | 'section' | 'node'
+
+export type FocusModeType = Exclude<FocusType, 'all' | 'node'>

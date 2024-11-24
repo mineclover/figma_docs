@@ -8,9 +8,9 @@ import SectionPage from '@/domain/section/SectionPage'
 const Setting = () => {
 	return (
 		<div>
-			<CategoryModal.AddModal />
 			{/* 현재 섹션 alias 추가 */}
 			<SectionPage />
+			<CategoryModal.AddModal />
 		</div>
 	)
 }

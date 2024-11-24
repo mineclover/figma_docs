@@ -230,7 +230,6 @@ const RemoveMemoModal = ({ memoKey: key, title, ...props }: MemoBlockProps) => {
 							key: '',
 						},
 					})
-
 					deleteLayer(RemoveMemoKey)
 				}}
 			>

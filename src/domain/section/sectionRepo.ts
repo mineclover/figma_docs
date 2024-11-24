@@ -1,6 +1,6 @@
 import { generateRandomText2 } from '@/utils/textTools'
 import { constant, prefix, selectedType } from '@/domain/interface'
-import { CurrentSectionInfo, FigmaUser, MEMO_KEY, Section, SectionID, SectionList } from '@/domain/types'
+import { CurrentSectionInfo, FigmaUser, FocusType, MEMO_KEY, Section, SectionID, SectionList } from '@/domain/types'
 import { getMemoModel, memoCheck, setMemoModel } from '../memo/memoRepo'
 // FilePathNodeSearch 모듈 경로 수정
 import { FilePathNodeSearch, linkPathNodeType } from '@/figmaPluginUtils'
@@ -207,14 +207,20 @@ export const getRootSection = (currentSection: CurrentSectionInfo[]) => {
 }
 
 /** rootSection 을 기반으로 옵션에 따라 키를 문자열로 뽑는 함수 */
-export const getSectionKey = (currentSection: CurrentSectionInfo[], option: 'all' | 'page' | 'section' | 'node') => {
+export const getSectionKey = (currentSection: CurrentSectionInfo[], option: FocusType) => {
 	console.log('getSectionKey', currentSection)
 
 	// 그래서 구성을 이렇게 함
 	const rootSection = getRootSection(currentSection)
 
 	if (option === 'page') {
-		return getPageId(rootSection)
+		const sections = currentSection.filter((section) => section.type === 'PAGE')
+		return sections
+			.map((section) => {
+				const context = section.alias === '' ? section.name : section.alias
+				return context
+			})
+			.join('/')
 	}
 	if (option === 'section') {
 		const sections = rootSection.filter((section) => section.type !== selectedType)
