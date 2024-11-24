@@ -52,18 +52,22 @@ function MemoPage({
 	console.log('memoPage1:', getSectionKey(currentSection, 'section'))
 
 	// 동작을 안함 원인을 찾아야함 memoPage2 이 자꾸 생략됨
-	console.log(memos[0].sectionBackLink[0], getSectionKey(currentSection, 'section'))
-	const newMemo = memos.filter((item) => {
-		console.log(item.sectionBackLink[0], getSectionKey(currentSection, 'section'))
-		return item.sectionBackLink[0] !== getSectionKey(currentSection, 'section')
-	})
-	console.log('memoPage3:', newMemo)
 
-	const memoObject = newMemo.reduce(
+	// const newMemo = memos.filter((item) => {
+	// 	console.log(item.sectionBackLink[0], getSectionKey(currentSection, 'section'))
+	// 	return item.sectionBackLink[0] !== getSectionKey(currentSection, 'section')
+	// })
+	// console.log('memoPage3:', newMemo)
+
+	const memoObject = memos.reduce(
 		(acc, item, index) => {
-			const sectionBackLink = item.sectionBackLink[0] ?? ''
-			if (acc[sectionBackLink] == null) acc[sectionBackLink] = []
-			acc[sectionBackLink].push(<MemoBlock memoKey={item.key} {...item} />)
+			try {
+				const sectionBackLink = item.sectionBackLink[0] ?? ''
+				if (acc[sectionBackLink] == null) acc[sectionBackLink] = []
+				acc[sectionBackLink].push(<MemoBlock memoKey={item.key} {...item} />)
+			} catch (e) {
+				console.error('MemoPage:60L', e)
+			}
 			return acc
 		},
 		{} as Record<string, h.JSX.Element[]>

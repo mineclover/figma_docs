@@ -23,6 +23,7 @@ import { IconArrowRight16, IconSearch32 } from '@create-figma-plugin/ui'
 import { IconArrowLeft16 } from '@create-figma-plugin/ui'
 import FilterIcon from '@/icon/FilterIcon'
 import { currentSectionAtom } from '../section/sectionModel'
+import { getSectionKey } from '../section/sectionRepo'
 
 // 이름 추천 받아요
 
@@ -33,6 +34,7 @@ function CategoryPage() {
 	const memoList = useSignal(memoListAtom)
 	const category = useSignal(categoryAtom)
 	const selectedCategory = useSignal(currentCategoryAtom)
+
 	const all = Object.values(memos)
 
 	const currentSection = useSignal(currentSectionAtom)
@@ -41,7 +43,17 @@ function CategoryPage() {
 	/** 카테고리에 값 추가 */
 	const other = Object.keys(category).reduce(
 		(acc, cur) => {
-			acc[cur] = all.filter((memo) => memo.category === cur) as Memo[]
+			acc[cur] = all.filter((memo) => {
+				if (!(memo.category === cur)) return false
+				const rootSection = getSectionKey(currentSection, 'section')
+				try {
+					const sectionBackLink = memo.sectionBackLink[0] ?? ''
+					if (sectionBackLink.startsWith(rootSection)) return true
+				} catch (e) {
+					console.error('RootPage:53L', e)
+				}
+				return false
+			}) as Memo[]
 			return acc
 		},
 		{} as Record<string, Memo[]>

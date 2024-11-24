@@ -153,8 +153,12 @@ export const setSectionModel = (key: SectionID, input: SectionList | '') => {
 			const memo = getMemoModel(memoKey)
 			// 섹션 백링크 제거...
 			if (memoCheck(memo)) {
-				memo.sectionBackLink = memo.sectionBackLink?.filter((link) => link !== key)
-				setMemoModel(memoKey, memo)
+				try {
+					memo.sectionBackLink = memo.sectionBackLink?.filter((link) => link !== key)
+					setMemoModel(memoKey, memo)
+				} catch (e) {
+					console.error('setSectionModel:156L', e)
+				}
 			}
 			// 메모 내에 섹션 백링크에서 해당 섹션 키 제거
 		})

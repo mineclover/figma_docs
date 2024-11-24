@@ -76,7 +76,14 @@ export const setMemoModel = (key: MEMO_KEY, memo: Memo | AddMemoType | NullMemo)
 
 	// if (memoCheck(memo) && memo.sectionBackLink && memo.sectionBackLink.length > 0) {
 	if (memoCheck(memo)) {
-		const removedSections = currentSection.filter((section) => !memo.sectionBackLink.includes(section))
+		const removedSections = currentSection.filter((section) => {
+			try {
+				if (!memo.sectionBackLink.includes(section)) return true
+			} catch (e) {
+				console.error('setMemoModel:80L', e)
+			}
+			return false
+		})
 
 		const time = new Date().getTime().toString()
 		const created = isAdd ? time : currentMemo.created
