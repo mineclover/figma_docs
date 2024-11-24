@@ -21,6 +21,8 @@ import { emit } from '@create-figma-plugin/utilities'
 import { addLayer } from '../modal/Modal'
 import DiagonalClientModal from '../modal/DiagonalClientModal'
 import { OptionModal } from '@/domain/memo/MemoModal'
+import { useState } from 'preact/hooks'
+import { clc } from '../modal/utils'
 
 type LinkType = 'figma' | 'notion' | 'github' | 'github code' | 'unknown'
 
@@ -61,6 +63,11 @@ const linkSwitch = (link: string) => {
 
 	if (link.startsWith('https://www.figma.com/design/')) {
 		return 'figma'
+	}
+
+	const notionRegex = /^https:\/\/([^.]+\.)?notion\.site\//
+	if (notionRegex.test(link)) {
+		return 'notion'
 	}
 
 	if (link.startsWith('https://www.notion.so/')) {
@@ -106,11 +113,12 @@ const CurrentMemoPage = ({
 }: MemoBlockProps) => {
 	// 섹션 정보 얻고
 
+	const [mouseEnter, setMouseEnter] = useState(false)
+
 	console.log(key, title, 'url::', url, category, props)
 	// 얻은 카테고리에 따라 메모 필터링해서 각 카테고리에 전달
 	const linkType = linkSwitch(url)
 	const linkInfo = linkObject(linkType, url)
-
 	const type = linkInfo ? linkInfo.type : linkType
 
 	return (
@@ -121,6 +129,12 @@ const CurrentMemoPage = ({
 					// remove
 					window.open(url, '_blank')
 				}}
+				onMouseEnter={() => {
+					setMouseEnter(true)
+				}}
+				onMouseLeave={() => {
+					setMouseEnter(false)
+				}}
 			>
 				{type === 'github' && <GithubIcon />}
 				{type === 'github code' && <GithubIcon />}
@@ -128,6 +142,7 @@ const CurrentMemoPage = ({
 				{type === 'figma' && <FigmaIcon />}
 				{type === 'unknown' && <IconHyperlinkLinked32 />}
 				{type === '' && <IconCross32 />}
+				<div className={clc(styles.url, mouseEnter && styles.open)}>{url}</div>
 			</button>
 			<div className={styles.wrapper}>
 				<div className={styles.top}>
