@@ -71,6 +71,7 @@ export const SectionPath = ({
 	return (
 		<div className={clc(styles.currentWrapper, className)}>
 			<button
+				type="button"
 				onClick={() => {
 					if (focusMode === 'section') {
 						currentSectionFocusAtom.value = 'page'
