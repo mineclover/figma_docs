@@ -101,6 +101,7 @@ b {
 
 	.header {
 		grid-area: header;
+		padding-block: 4px;
 	}
 	.divider {
 		grid-area: divider;
@@ -139,16 +140,17 @@ b {
 	.submit {
 		grid-area: side;
 		border-radius: 4px;
-		aspect-ratio: 1;
+
 		font-weight: 700;
 		background-color: var(--figma-color-bg-brand);
 	}
 }
 
 .add {
-	width: fit-content;
+	width: auto;
 	height: fit-content;
 	grid-template-columns: 2fr 1fr 1fr;
+	grid-template-rows: 24px 1px 24px 24px 24px 1fr;
 	grid-template-areas:
 		'section section section'
 		'divider divider divider'
@@ -223,6 +225,7 @@ b {
 }
 
 .addModal {
+	width: 100%;
 	height: 100%;
 	overflow: auto;
 }
@@ -279,6 +282,7 @@ b {
 	align-items: flex-start;
 	gap: 4px;
 	background-color: var(--figma-color-bg);
+	border: 1px solid var(--figma-color-border);
 	border-radius: 4px;
 	padding: 4px;
 
@@ -288,6 +292,12 @@ b {
 		white-space: nowrap;
 		text-align: left;
 		width: 100%;
+		&:hover {
+			background-color: var(--figma-color-bg-selected);
+		}
+	}
+
+	.delete {
 		&:hover {
 			background-color: var(--figma-color-bg-danger);
 		}
@@ -302,4 +312,12 @@ b {
 	margin: 16px 4px 4px;
 	font-size: 12px;
 	font-weight: 700;
+}
+
+.category {
+	margin-left: 6px;
+	border: none;
+	background-color: var(--figma-color-bg);
+	color: var(--figma-color-text);
+	font-weight: 12px;
 }

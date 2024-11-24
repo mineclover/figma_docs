@@ -30,6 +30,13 @@
 }
 
 .link {
+	position: relative;
+	width: 32px;
+	height: 32px;
+	display: flex;
+	flex-shrink: 0;
+	align-items: center;
+	justify-content: center;
 	&:hover {
 		background-color: var(--figma-color-bg-brand);
 	}
@@ -50,5 +57,24 @@
 .delete {
 	&:hover {
 		background-color: var(--figma-color-bg-danger);
+	}
+}
+
+.url {
+	position: absolute;
+	left: calc(100% + 4px);
+	top: 0;
+	width: calc(100vw - 64px);
+
+	max-width: calc(100vw - 64px);
+	text-align: left;
+	background-color: var(--figma-color-bg);
+	padding: 2px 4px;
+	border: 1px solid var(--figma-color-border);
+	border-radius: 4px;
+	word-break: break-all;
+	display: none;
+	&.open {
+		display: block;
 	}
 }

@@ -22,6 +22,7 @@ import { currentSectionAtom, currentSectionFocusAtom } from '../section/sectionM
 import { getSectionKey } from '../section/sectionRepo'
 
 import './root.css'
+import { IconLibrary32 } from '@create-figma-plugin/ui'
 
 // 이름 추천 받아요
 
@@ -125,6 +126,17 @@ function CategoryPage() {
 							</button>
 						)
 
+					if (key === 'all')
+						return (
+							<button
+								className={clc(styles.all, active && styles.active)}
+								key={key}
+								onClick={() => handleCategoryClick(key)}
+							>
+								<IconLibrary32 />
+								<div className={clc(styles.badge, styles.pinned)}>{target.length}</div>
+							</button>
+						)
 					// if (key === 'setting')
 					// 	return (
 					// 		<button

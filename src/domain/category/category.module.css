@@ -82,6 +82,17 @@
 		background-color: var(--figma-color-bg-danger-hover);
 	}
 }
+.all {
+	position: relative;
+	flex-grow: 0;
+	flex-shrink: 0;
+	&.active {
+		background-color: var(--figma-color-bg-brand-secondary);
+	}
+	&:hover {
+		background-color: var(--figma-color-bg-brand-hover);
+	}
+}
 
 .modal {
 	display: grid;
@@ -130,14 +141,16 @@
 	.submit {
 		grid-area: side;
 		border-radius: 4px;
-		aspect-ratio: 1;
+
 		font-weight: 700;
 		background-color: var(--figma-color-bg-brand);
 	}
 }
 
 .add {
+	width: auto;
 	grid-template-columns: 2fr 1fr 1fr;
+	grid-template-rows: 24px 24px 24px;
 	grid-template-areas:
 		'header header header'
 		'main main side'
