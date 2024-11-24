@@ -8,6 +8,7 @@ import { modalAlert } from '@/components/alert'
 import styles from './section.module.css'
 import { addLayer } from '@/components/modal/Modal'
 import { clc } from '@/components/modal/utils'
+import { getRootSection } from './sectionRepo'
 
 // 섹션 추가 삭제는 메모 추가 삭제에 의해 자연스럽게 발생하는 동작임
 type Props = {
@@ -53,17 +54,23 @@ const SectionItem = ({ pageId, id, name, type, alias }: CurrentSectionInfo & Pro
 
 // pageId 는 상위 요소를 줌 하기 위해 제공했음
 
+/**
+ * 전체 경로 뷰어로 사용 중인 상태
+ * alias 를 설정해야하는 경우가 아니라면 일관된 최종 경로로 보여줘야함
+ */
 export const SectionPath = ({
 	pageId,
 	currentSection,
 	className,
 }: { pageId: string; currentSection: CurrentSectionInfo[]; className?: string } & Props) => {
+	const rootSection = getRootSection(currentSection)
+
 	return (
 		<div className={clc(styles.currentWrapper, className)}>
 			<span className={styles.title}>현재 섹션</span>
-			{currentSection.map((section, index) => {
+			{rootSection.map((section, index) => {
 				const context = section.alias === '' ? section.name : section.alias
-				const isLast = index === currentSection.length - 1
+				const isLast = index === rootSection.length - 1
 				const isFirst = index === 0
 
 				if (section.type === 'SELECTED') {

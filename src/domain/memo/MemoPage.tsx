@@ -1,5 +1,5 @@
 import { ComponentChildren, Fragment, h } from 'preact'
-import { useEffect, useState } from 'preact/hooks'
+import { useEffect, useMemo, useState } from 'preact/hooks'
 
 import styles from './memo.module.css'
 
@@ -19,6 +19,7 @@ import MemoBlock from '@/components/page/MemoBlock'
 
 import MemoModal, { AddMemoKey } from './MemoModal'
 import { IconPlus32 } from '@create-figma-plugin/ui'
+import { getOneCurrentSelection, getSectionKey } from '../section/sectionRepo'
 
 const options = Object.keys(hotTopic)
 
@@ -43,10 +44,30 @@ function MemoPage({
 
 	if (!memos) return null
 
-	const memoList = memos.map((item) => {
-		console.log('memoPage:', item)
-		return <MemoBlock memoKey={item.key} {...item} />
+	// const memoList = memos.map((item) => {
+	// 	console.log('memoPage:', item)
+	// 	return <MemoBlock memoKey={item.key} {...item} />
+	// })
+
+	console.log('memoPage1:', getSectionKey(currentSection, 'section'))
+
+	// 동작을 안함 원인을 찾아야함 memoPage2 이 자꾸 생략됨
+	console.log(memos[0].sectionBackLink[0], getSectionKey(currentSection, 'section'))
+	const newMemo = memos.filter((item) => {
+		console.log(item.sectionBackLink[0], getSectionKey(currentSection, 'section'))
+		return item.sectionBackLink[0] !== getSectionKey(currentSection, 'section')
 	})
+	console.log('memoPage3:', newMemo)
+
+	const memoObject = newMemo.reduce(
+		(acc, item, index) => {
+			const sectionBackLink = item.sectionBackLink[0] ?? ''
+			if (acc[sectionBackLink] == null) acc[sectionBackLink] = []
+			acc[sectionBackLink].push(<MemoBlock memoKey={item.key} {...item} />)
+			return acc
+		},
+		{} as Record<string, h.JSX.Element[]>
+	)
 
 	return (
 		<div className={styles.memoBlocks}>
@@ -68,7 +89,16 @@ function MemoPage({
 				</div>
 			)}
 
-			{memoList}
+			{Object.entries(memoObject).map(([key, value]) => {
+				return (
+					<div key={key}>
+						<h3 className={styles.h3}>{key}</h3>
+						{value.map((item) => {
+							return item
+						})}
+					</div>
+				)
+			})}
 		</div>
 	)
 }

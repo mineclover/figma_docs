@@ -26,7 +26,7 @@ const StraightClientModal = ({ target, offset, axis, children }: Props & BasePro
 	}, [target, offset, axis])
 
 	return (
-		<div style={{ ...next }} className={clc(styles.wrap, styles[axis])}>
+		<div style={{ ...next }} className={clc(styles[axis])}>
 			{children}
 		</div>
 	)

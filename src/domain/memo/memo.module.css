@@ -297,3 +297,9 @@ b {
 		white-space: nowrap;
 	}
 }
+
+.h3 {
+	margin: 16px 4px 4px;
+	font-size: 12px;
+	font-weight: 700;
+}

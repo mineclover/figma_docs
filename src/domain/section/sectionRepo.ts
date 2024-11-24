@@ -178,14 +178,42 @@ export const getNodeId = (currentSection: CurrentSectionInfo[]) => {
 	return currentSection.filter((section) => section.type === selectedType)[0]?.id ?? ''
 }
 
+/**
+ * main에서 얻은 CurrentSectionInfo 를 기반으로 데이터를 파싱하는 도구임
+ * 파싱되는 것의 순서는 page > [...section] > (node) 임
+ * 섹션에서 내려올 때 아마도 첫 섹션이겠지만 /로 시작할 수 있음
+ * 내가 원하는 기능은 경로에서 첫 시작이 /로 시작하는게 있을 경우
+ * /보다 앞에있는 currentSection 을 제거한 상태로 section key를 완성하는 것
+ */
+export const getRootSection = (currentSection: CurrentSectionInfo[]) => {
+	return currentSection.reduce((acc, cur, index, arr) => {
+		const context = cur.alias === '' ? cur.name : cur.alias
+		if (context.startsWith('/')) {
+			const newCur = {
+				...cur,
+				alias: '',
+				name: context.slice(1),
+			}
+
+			return [newCur]
+		}
+		acc.push(cur)
+		return acc
+	}, [] as CurrentSectionInfo[])
+}
+
+/** rootSection 을 기반으로 옵션에 따라 키를 문자열로 뽑는 함수 */
 export const getSectionKey = (currentSection: CurrentSectionInfo[], option: 'all' | 'page' | 'section' | 'node') => {
 	console.log('getSectionKey', currentSection)
 
+	// 그래서 구성을 이렇게 함
+	const rootSection = getRootSection(currentSection)
+
 	if (option === 'page') {
-		return getPageId(currentSection)
+		return getPageId(rootSection)
 	}
 	if (option === 'section') {
-		const sections = currentSection.filter((section) => section.type !== selectedType)
+		const sections = rootSection.filter((section) => section.type !== selectedType)
 		return sections
 			.map((section) => {
 				const context = section.alias === '' ? section.name : section.alias
@@ -194,7 +222,7 @@ export const getSectionKey = (currentSection: CurrentSectionInfo[], option: 'all
 			.join('/')
 	}
 	if (option === 'node') {
-		return currentSection
+		return rootSection
 			.map((section) => {
 				const context = section.alias === '' ? section.name : section.alias
 				return context

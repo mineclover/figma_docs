@@ -1,5 +1,5 @@
 import { ComponentChildren, Fragment, h } from 'preact'
-import { Dispatch, StateUpdater, useState } from 'preact/hooks'
+import { Dispatch, StateUpdater, useEffect, useState } from 'preact/hooks'
 
 import styles from './memo.module.css'
 
@@ -82,6 +82,23 @@ function AddMemoModal() {
 	const useSelectedComponent = useState<Map<string, string>>(new Map([]))
 	const [selectedComponent, setSelectedComponent] = useSelectedComponent
 
+	const currentSEctionSave = () => {
+		setSelectedComponent((prev) => {
+			const componentKey = getCurrentSectionToComponentKey(currentSection, 'node')
+			const componentName = getCurrentSectionToComponentName(currentSection, 'node')
+			if (componentKey && componentName) {
+				prev.set(componentKey, componentName)
+				return new Map(prev)
+			}
+			// 변경 없음을 의미
+			return prev
+		})
+	}
+	useEffect(() => {
+		// 추가할 때 선택한 노드는 자동 추가
+		currentSEctionSave()
+	}, [])
+
 	return (
 		<div className={styles.addModal}>
 			<button className={styles.close}>
@@ -98,7 +115,7 @@ function AddMemoModal() {
 						currentSection.filter((section) => section.type === selectedType)
 					)
 
-					/** 추가할 때 선택한 컴포넌트는 첫번째로 등록 */
+					/** 추가할 때 선택된 상태인 컴포넌트는 첫번째로 등록함 */
 					const componentKey = getCurrentSectionToComponentKey(currentSection, 'node')
 
 					const newMemo = {
@@ -154,15 +171,7 @@ function AddMemoModal() {
 				<button
 					className={clc(styles.componentAdd, styles.row)}
 					onClick={() => {
-						setSelectedComponent((prev) => {
-							const componentKey = getCurrentSectionToComponentKey(currentSection, 'node')
-							const componentName = getCurrentSectionToComponentName(currentSection, 'node')
-							if (componentKey && componentName) {
-								prev.set(componentKey, componentName)
-								return new Map(prev)
-							}
-							return prev
-						})
+						currentSEctionSave()
 					}}
 				>
 					<IconPlus32 />
@@ -188,12 +197,12 @@ export const OptionModal = (props: MemoBlockProps) => {
 	const { memoKey: key, writer, title, description } = props
 	const user = useSignal(userAtom)
 
-	if (writer !== user.uuid) return <div>작성자만 수정 가능</div>
+	if (writer !== user.uuid) return <span>작성자 본인 {user.uuid === writer ? 'O' : 'X'}</span>
 
 	return (
 		<div className={styles.more}>
-			<span>제목: {title}</span>
-			<span> {description}</span>
+			<span>작성자 본인 {user.uuid === writer ? 'O' : 'X'}</span>
+			{/* <span> {description}</span> */}
 			{/* <button>이동</button> */}
 			{/* <button onClick={() => deleteLayer(AddMemoKey)}>상세정보</button> */}
 			{/* <button onClick={() => deleteLayer(AddMemoKey)}>수정</button> */}

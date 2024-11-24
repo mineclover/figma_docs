@@ -8,6 +8,7 @@ import LinkIcon from '@/icon/LinkIcon'
 import { dataMemosEmit } from '@/domain/memo/memoAdapter'
 import styles from './memoBlock.module.css'
 import {
+	IconCross32,
 	IconEllipsis32,
 	IconHyperlinkLinked32,
 	IconLayerComponent16,
@@ -94,7 +95,15 @@ const ComponentLink = ({ componentLink }: { componentLink: string }) => {
 
 export type MemoBlockProps = Memo & { memoKey: string }
 
-const CurrentMemoPage = ({ memoKey: key, title, url, category, componentLink, ...props }: MemoBlockProps) => {
+const CurrentMemoPage = ({
+	memoKey: key,
+	title,
+	url,
+	category,
+	componentLink,
+	sectionBackLink,
+	...props
+}: MemoBlockProps) => {
 	// 섹션 정보 얻고
 
 	console.log(key, title, 'url::', url, category, props)
@@ -118,6 +127,7 @@ const CurrentMemoPage = ({ memoKey: key, title, url, category, componentLink, ..
 				{type === 'notion' && <NotionIcon />}
 				{type === 'figma' && <FigmaIcon />}
 				{type === 'unknown' && <IconHyperlinkLinked32 />}
+				{type === '' && <IconCross32 />}
 			</button>
 			<div className={styles.wrapper}>
 				<div className={styles.top}>
@@ -138,6 +148,7 @@ const CurrentMemoPage = ({ memoKey: key, title, url, category, componentLink, ..
 						'asdf',
 						<DiagonalClientModal target={e.currentTarget as HTMLButtonElement & string} offset={0} axis="leftTop">
 							<OptionModal
+								sectionBackLink={sectionBackLink}
 								memoKey={key}
 								title={title}
 								url={url}
