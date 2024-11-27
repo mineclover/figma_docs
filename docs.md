@@ -75,7 +75,7 @@ Layer 로 시작하는거 많이 쓸 것 같음
 
 # 기능 정의
 
-![alt text](image-2.png)
+![alt text](docs/image-2.png)
 
 ## 필터 기능
 
@@ -114,7 +114,7 @@ API를 쏘거나 외부에 배포된 웹 페이지에 접속하는 것도 가능
 
 # 아키텍처 컨벤션
 
-![alt text](image-1.png)
+![alt text](docs/image-1.png)
 
 [Types/Spec](#Types/Spec) 에서  
 개발하고자하는 서비스에서 도메인을 위해 정의되는 데이터에 대한 타입 정의를 한다

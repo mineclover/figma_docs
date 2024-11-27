@@ -80,14 +80,14 @@ npm run build
 페이지를 이동하거나 선택된 노드가 바뀌거나 선택 해제 할 때  
 선택된 현재 섹션이 변경되고 현재 선택된 경로가 현재 섹션: ~ 으로 표시 됨
 
-![alt text](image-6.png)
+![alt text](docs/image-6.png)
 
 ## 전체 메모 조회하기
 
 책 아이콘을 누르면 포커싱 위치 상관 없이 전체 메모를 조회할 수 있다  
 상단 뱃지는 해당 카테고리의 전체 메모 갯수를 나타냄
 
-![alt text](image-7.png)
+![alt text](docs/image-7.png)
 
 ## 포커싱 메모 조회
 
@@ -95,7 +95,7 @@ npm run build
 게시판에는 2/3개의 메모가 있고  
 게시판/뷰어에는 1/1개의 메모가 있는 것을 알 수 있다
 
-![alt text](image-8.png)![alt text](image-9.png)
+![alt text](docs/image-8.png)![alt text](docs/image-9.png)
 
 ## 경로 생성 규칙
 
@@ -103,25 +103,25 @@ npm run build
 섹션명은 여러번 중첩할 수 있어서 페이지명/A/B 처럼 생성된다  
 이름 앞에 /를 붙였을 경우 해당 섹션을 루트로 판단한다
 
-![alt text](image-10.png)![alt text](image-11.png)
+![alt text](docs/image-10.png)![alt text](docs/image-11.png)
 
 ## 포커싱 기준 조절
 
 포커싱 기준을 페이지로 설정하면 페이지 기준으로 경로가 생성되고  
 섹션으로 설정하면 섹션 기준으로 경로가 생성된다  
-![alt text](image-12.png)
+![alt text](docs/image-12.png)
 
 ## 노드 포커스 숏 컷
 
 메모할 때 추가한 참조 컴포넌트 추가는 컴포넌트 아이콘을 추가하고  
 이 아이콘을 누르면 해당 위치로 이동한다
 
-![alt text](image-13.png)
+![alt text](docs/image-13.png)
 
 ## 링크 열기
 
 누르면 링크가 열린다  
-![alt text](image-14.png)
+![alt text](docs/image-14.png)
 
 ## 설정 창 기능
 
@@ -133,11 +133,11 @@ npm run build
 이 기능을 적용햇기 때문에 예시에서  
 페이지 이름이 페이지 인데 게시판으로 인식되는 것을 볼 수 있다
 
-![alt text](image-15.png)
+![alt text](docs/image-15.png)
 
 ## dev 모드에서 켜지고 써진다
 
-![alt text](image-16.png)![alt text](image-17.png)
+![alt text](docs/image-16.png)![alt text](docs/image-17.png)
 
 ## 시나리오 예시
 
@@ -146,18 +146,18 @@ npm run build
 ### 메모 작성하기
 
 1. 기본 화면에서 탭을 선택하면 아래에 + 버튼이 나타남
-   ![기본 화면](image-3.png)
+   ![기본 화면](docs/image-3.png)
 
 2. 작성하고자하는 내용 추가
 
 작업 중인 화면을 기준으로 경로를 가져오고
 제목, 설명 , 추가하고자하는 숏 컷을 추가
 
-![alt text](image-4.png)
+![alt text](docs/image-4.png)
 
 3. 결과
 
-![alt text](image-5.png)
+![alt text](docs/image-5.png)
 
 - 디자인 시스템 => 페이지명
 - 디자인 시스템 기획 => 제목
@@ -170,7 +170,7 @@ plan 카테고리에 잘못 작성한 메모를 develop으로 이동하고 섹�
 
 수정 메뉴를 연 상태애서 섹션 이동하고 카테고리 수정하고 수정 버튼 누를 시 섹션 경로 , 카테고리 수정 완료 됨
 
-![alt text](image-18.png)![alt text](image-19.png)
+![alt text](docs/image-18.png)![alt text](docs/image-19.png)
 
 #### 번외
 

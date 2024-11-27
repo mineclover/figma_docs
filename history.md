@@ -125,7 +125,7 @@
     - effect 를 써서 감시하는 구조로 결정함
 - ui 와이어 프레임 1차 완료
 
-![alt text](image-1.png)
+![alt text](docs/image-1.png)
 
 # 2024-10-30
 
